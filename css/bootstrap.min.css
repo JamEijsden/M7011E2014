@@ -55,3 +55,7 @@
 .navbar-fixed-bottom {
   border-radius: 0;
 }
+
+#sidebar-info { 
+    background-color: yellow;
+}
