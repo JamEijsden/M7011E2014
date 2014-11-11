@@ -1,6 +1,7 @@
 package main
 
 import (
+<<<<<<< HEAD
 	"fmt"
 	"html/template"
 	"net/http" //package for http based web programs
@@ -46,4 +47,25 @@ func main() {
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/hej/", hejHandler)
 	http.ListenAndServe("localhost:9999", nil) // listen for connections at port 9999 on the local machine
+=======
+	"github.com/go-martini/martini"
+)
+
+/*
+Kollade in martini lite. Värkar ganska trevligt.
+för att få in martini i sitt golang så behöver
+man hämta ner det.
+
+Detta görs lättast med att skriva
+go get github.com/go-martini/martini
+från terminalen/ cmd
+*/
+
+func main() {
+	m := martini.Classic()
+	m.Get("/", func() string {
+		return "Hello world!"
+	})
+	m.Run()
+>>>>>>> origin/master
 }
