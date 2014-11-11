@@ -1393,6 +1393,30 @@ pre code {
   margin-right: auto;
   margin-left: auto;
 }
+
+#sidebar-info {
+  float: left;
+  width: 20%;
+}
+
+#allContent {
+  float: right;
+  width: 80%;
+}
+
+#profile-photo{
+  float: top;
+  height: 30%;
+  width: 80%;
+  margin: 0px;
+}
+
+#photo {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+}
 @media (min-width: 768px) {
   .container {
     width: 750px;

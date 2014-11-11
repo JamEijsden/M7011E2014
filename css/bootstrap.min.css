@@ -1,4 +1,4 @@
-
+/*!
  .navbar-default {
   background-image: -webkit-linear-gradient(top, #fff 0%, #000000 100%);
   background-image:      -o-linear-gradient(top, #fff 0%, #000000 100%);
@@ -55,7 +55,9 @@
 .navbar-fixed-bottom {
   border-radius: 0;
 }
+*/
 
-#sidebar-info { 
+.container #sidebar-info { 
     background-color: yellow;
+    float:left;
 }
