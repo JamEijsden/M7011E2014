@@ -23,8 +23,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func hejHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Inside Hej")
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	if t, err := template.ParseFiles(filepath.Join(templates, "about.html")); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -44,6 +43,6 @@ func tomteHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	templates = ""
 	http.HandleFunc("/", handler)
-	http.HandleFunc("/hej/", hejHandler)
+	http.HandleFunc("/about/", aboutHandler)
 	http.ListenAndServe("localhost:9999", nil) // listen for connections at port 9999 on the local machine
 }
