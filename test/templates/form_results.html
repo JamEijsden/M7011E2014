@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<head>
+<title>Go Template Examples</title>
+<script>
+window.addEventListener("load", function () {
+var test_dq = "{{.Script}}";
+var test_sq = '{{.Script}}';
+if {{.Script}} != null {
+var test = {{.Script}};
+}
+document.{{.Script}};
+});
+ 
+function horray(input) {
+if (input != '') {
+alert("horray:" + input);
+}
+}
+</script>
+<style>
+background: #808080 url('{{.Style}}')
+</style>
+</head>
+<body>
+<span>
+<div>Tag: </div>
+<div>{{.Tag}}</div>
+</span>
+<span>
+<div>Link Attribute:</div>
+<a href="//www.veracode.com/%7B%7B.AttributeLink%7D%7D">stuff</a>
+</span>
+<span>
+<div>Double Quote Attribute:</div>
+<div id="{{.AttributeDouble}}">stuff</div>
+</span>
+<span>
+<div>Single Quote Attribute:</div>
+<div id='{{.AttributeSingle}}'>stuff</div>
+</span>
+<span>
+<div>OnEvent Attribute (onmouseover):</div>
+<a href="http://veracode.com/" onmouseover="horray('{{.AttributeOnEvent}}');">stuff</a>
+</span>
+<span>
+<div>Src Attribute:</div>
+<iframe src="//www.veracode.com/%7B%7B.AttributeSrc%7D%7D"></iframe>
+</span>
+</body>
+</html>
