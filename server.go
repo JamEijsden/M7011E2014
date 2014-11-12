@@ -5,7 +5,8 @@ import (
 	"html/template"
 	"net/http" //package for http based web programs
 	//"net/url"
-	"path/filepath"
+	"os"
+	//"path/filepath"
 )
 
 var templates string
@@ -13,7 +14,7 @@ var templates string
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside handler")
 	// Parse our root.html template
-	if t, err := template.ParseFiles(filepath.Join(templates, "index.html")); err != nil {
+	if t, err := template.ParseFiles("templates/_testBase.html", "templates/index.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
@@ -24,26 +25,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
-	if t, err := template.ParseFiles(filepath.Join(templates, "about.html")); err != nil {
+	fmt.Println("Inside about")
+	if t, err := template.ParseFiles("templates/_testBase.html", "templates/about.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
 		// return to client via t.Execute
 		t.Execute(w, nil)
 	}
-
-}
-func tomteHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Inside Tomte")
-	remPart := r.URL.Path[len("/tomte"):]
-	fmt.Fprintf(w, "Yes? This is %s", remPart)
 
 }
 
 func testHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside test")
 
-	if t, err := template.ParseFiles(filepath.Join(templates, "test.html")); err != nil {
+	if t, err := template.ParseFiles("templates/_testBase.html", "templates/test.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
@@ -53,10 +49,38 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func backHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func main() {
-	templates = ""
+
+	fs := justFilesFilesystem{http.Dir("/templates/css/")}
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(fs)))
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/about/", aboutHandler)
 	http.HandleFunc("/test/", testHandler)
+
 	http.ListenAndServe("localhost:9999", nil) // listen for connections at port 9999 on the local machine
+}
+
+// HIDE DICRECTORY
+type justFilesFilesystem struct {
+	fs http.FileSystem
+}
+
+func (fs justFilesFilesystem) Open(name string) (http.File, error) {
+	f, err := fs.fs.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	return neuteredReaddirFile{f}, nil
+}
+
+type neuteredReaddirFile struct {
+	http.File
+}
+
+func (f neuteredReaddirFile) Readdir(count int) ([]os.FileInfo, error) {
+	return nil, nil
 }
