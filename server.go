@@ -14,7 +14,7 @@ var templates string
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside handler")
 	// Parse our root.html template
-	if t, err := template.ParseFiles("templates/_testBase.html", "templates/index.html"); err != nil {
+	if t, err := template.ParseFiles("_testBase.html", "templates/index.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
@@ -26,7 +26,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside about")
-	if t, err := template.ParseFiles("templates/_testBase.html", "templates/about.html"); err != nil {
+	if t, err := template.ParseFiles("_testBase.html", "templates/about.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
@@ -39,7 +39,7 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 func testHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside test")
 
-	if t, err := template.ParseFiles("templates/_testBase.html", "templates/test.html"); err != nil {
+	if t, err := template.ParseFiles("_testBase.html", "templates/test.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
@@ -55,13 +55,13 @@ func backHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	fs := justFilesFilesystem{http.Dir("/templates/css/")}
-	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(fs)))
+	//fs := justFilesFilesystem{http.Dir("/static")}
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/about/", aboutHandler)
 	http.HandleFunc("/test/", testHandler)
 
-	http.ListenAndServe("localhost:9999", nil) // listen for connections at port 9999 on the local machine
+	http.ListenAndServe("localhost:80", nil) // listen for connections at port 9999 on the local machine
 }
 
 // HIDE DICRECTORY
