@@ -61,7 +61,7 @@ func main() {
 	http.HandleFunc("/about/", aboutHandler)
 	http.HandleFunc("/test/", testHandler)
 
-	http.ListenAndServe("localhost:9999", nil) // listen for connections at port 9999 on the local machine
+	http.ListenAndServe("192.168.1.230:9999", nil) // listen for connections at port 9999 on the local machine
 }
 
 // HIDE DICRECTORY

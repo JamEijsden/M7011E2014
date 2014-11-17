@@ -1394,6 +1394,36 @@ pre code {
   margin-left: auto;
 }
 
+
+#top-box {
+  float: top;
+
+}
+
+#facebook {
+  float: right;
+  width: 50%;
+  text-align: right;
+  margin: 0 auto;
+}
+
+#facebook-login {
+  float: right;
+  min-height: 50%;
+}
+
+#facebook-like {
+  float: right;
+  min-height: 50%;
+  margin: 0 auto;
+}
+
+#top-title {
+  float: left;
+  width: 50%;
+
+}
+
 #sidebar-info {
   float: left;
   width: 20%;
