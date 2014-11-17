@@ -61,7 +61,19 @@ func main() {
 	http.HandleFunc("/about/", aboutHandler)
 	http.HandleFunc("/test/", testHandler)
 
-	http.ListenAndServe("192.168.1.230:9999", nil) // listen for connections at port 9999 on the local machine
+	var i int
+	fmt.Println("Run server on:\n1. localhost:9999\n192.168.1.230:9999\nChoose a connection(1 or 2).")
+	fmt.Scan(&i)
+	if i == 1 {
+		fmt.Println("Server running on localhost:9999")
+		http.ListenAndServe("localhost:9999", nil)
+	} else if i == 2 {
+		fmt.Println("Server running on 192.168.1.230:9999")
+		http.ListenAndServe("192.168.1.230:9999", nil) // listen for connections at port 9999 on the local machine
+	} else {
+		fmt.Println("Not a valid option")
+	}
+
 }
 
 // HIDE DICRECTORY

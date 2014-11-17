@@ -1,15 +1,26 @@
+
+
+
 {{define "title"}} This is Test!  {{end}}
 
 {{define "content"}}  
-    <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: { lat: -34.397, lng: 150.644},
-          zoom: 8
-        };
-        var map = new google.maps.Map(document.getElementById('allContent'),
-            mapOptions);
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
+    <div id="map-canvas">
+    </div>
  {{end}}
+
+ {{define "head"}} 
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB28dYnChM2OgEMpgLL8rOXsR7_cuGJ4NU"> </script>
+<script type="text/javascript">
+	  fvar map;
+	function initialize() {
+	  var mapOptions = {
+	    zoom: 8,
+	    center: new google.maps.LatLng(-34.397, 150.644)
+	  };
+	  map = new google.maps.Map(document.getElementById('map-canvas'),
+	      mapOptions);
+	}
+
+	google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+{{end}}
