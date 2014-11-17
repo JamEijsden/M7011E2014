@@ -7,11 +7,24 @@
 <link href="/static/css/bootstrap.css" type="text/css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB28dYnChM2OgEMpgLL8rOXsR7_cuGJ4NU"> </script>
 <style type="text/css">
     body{
     	padding-top: 35px;
     }
 </style>
+
+<script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: { lat: -34.397, lng: 150.644},
+          zoom: 8
+        };
+        var map = new google.maps.Map(document.getElementById('allContent'),
+            mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
 </head>
 <body>
 <div class="container" id="top-box">

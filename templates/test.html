@@ -1,3 +1,15 @@
-{{define "title"}} This is Test! {{end}}
+{{define "title"}} This is Test!  {{end}}
 
-{{define "content"}} We are trying out the template lib in Go and so far it is working quite well! {{end}}
+{{define "content"}}  
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: { lat: -34.397, lng: 150.644},
+          zoom: 8
+        };
+        var map = new google.maps.Map(document.getElementById('allContent'),
+            mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+ {{end}}
