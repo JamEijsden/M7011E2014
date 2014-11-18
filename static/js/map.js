@@ -1,5 +1,5 @@
 var map
-function initialize(map) {
+function initialize() {
   var mapCanvas = document.getElementById('map_canvas');
   var mapOptions = {
     center: new google.maps.LatLng(44.5403, -78.5463),
@@ -7,12 +7,14 @@ function initialize(map) {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
   map = new google.maps.Map(mapCanvas, mapOptions)
+  
+  google.maps.event.addListener(map, 'click', function(event) {
+    placeMarker(event.latLng);
+  });
 }
     google.maps.event.addDomListener(window, 'load', initialize);
 
-    google.maps.event.addListener(map, 'click', function(event) {
- 		placeMarker(event.latLng);
-	});
+    
 
 function placeMarker(location) {
     var marker = new google.maps.Marker({
