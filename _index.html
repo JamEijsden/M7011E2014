@@ -24,11 +24,8 @@
 </div>
 
 <div class="containter" id="facebook">
-<!--
 
     <div id="fb-root"></div>
-
- -->
    
 <script>
   // This is called with the results from from FB.getLoginStatus().
@@ -88,17 +85,6 @@
     statusChangeCallback(response);
   });
 
-  };
-
-  // Load the SDK asynchronously
-  (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-
   // Here we run a very simple test of the Graph API after login is
   // successful.  See statusChangeCallback() for when this call is made.
   function testAPI() {
@@ -116,7 +102,6 @@
 
 
 
-<!--THE ACCUAL LOGIN BUTTON ###################################################################-->
 <div class="container" id="facebook-login">
 </div>
 <div class="container" id="facebook-like">
@@ -132,8 +117,13 @@
 </div>
 
 <div class="container" id="sidebar-info">   
+<<<<<<< HEAD
 	<div class="row" id="profile-photo">
 		<img src="" id="photo" style="width:100px; height:100px;" alt="Smiley">
+=======
+	<div class="container" id="profile-photo">
+		<img src="" id="photo" alt="fbphoto">
+>>>>>>> e1af45d2966d79c1950fe92d64c067b9be9e6f1e
 
 	</div>
 	<div class="row">
