@@ -6,6 +6,12 @@ function initialize() {
     zoom: 8,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
+  if (navigator.geolocation) {
+     navigator.geolocation.getCurrentPosition(function (position) {
+         initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+         map.setCenter(initialLocation);
+     });
+ }
   map = new google.maps.Map(mapCanvas, mapOptions)
 
   google.maps.event.addListener(map, 'click', function(event) {

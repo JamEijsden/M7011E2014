@@ -14,7 +14,7 @@ var templates string
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside handler")
 	// Parse our root.html template
-	if t, err := template.ParseFiles("_testBase.html", "templates/index.html"); err != nil {
+	if t, err := template.ParseFiles("_index.html", "templates/index.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
