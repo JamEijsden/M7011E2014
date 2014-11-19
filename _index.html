@@ -55,16 +55,19 @@
   getUID();
 }(document, 'script', 'facebook-jssdk'));
 
-function getUID(){FB.getLoginStatus(function(response) {
+
+
+window.fbAsyncCHECK = function() {B.getLoginStatus(function(response) {
   if (response.status === 'connected') {
     console.log('Logged in.');
     alert ("Your UID is " + response.authResponse.userID);
-  }
-  else {
-    FB.login();
-  }
-});
+  }else {
+      FB.login();
+      alert ("YOLO DE GICK INTE");
+    }
+  };
 };
+
 
 </script>
   
@@ -93,7 +96,7 @@ function getUID(){FB.getLoginStatus(function(response) {
 
 <div class="container" id="sidebar-info">   
 	<div class="container" id="profile-photo">
-		<img src="/static/image/smiley.jpg" id="photo" alt="Smiley">
+		<img src="" id="photo" alt="fbphoto">
 
 	</div>
 
