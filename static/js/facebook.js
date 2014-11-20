@@ -2,31 +2,41 @@
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
     console.log(response);
+    	alert("top");
+
     var div_FBLogin = document.getElementById('fb-login');
     var div_FBLogout = document.getElementById('fb-logout');
-    var div_FBLike = document.getElementById('fb-like');
+    var div_FBLike = document.getElementById('fb-liike');
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
-      div_FBLogin.style.display = 'none';
+      div_FBLogin.style.display = 'inline';
       div_FBLogout.style.display = 'inline';
       div_FBLike.style.display = 'inline';
+	replace_login(true);
       testAPI();
+	alert("logged in");
+
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
       div_FBLogin.style.display = 'inline';
       div_FBLogout.style.display = 'none';
       div_FBLike.style.display = 'none';
-     
+	replace_login(false);
+	alert("not logged in");
+
     } else {
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
+	replace_login(false);
       div_FBLogin.style.display = 'inline';
       div_FBLogout.style.display = 'none';
       div_FBLike.style.display = 'none';
+	alert("not logged in");
+
     }
   }
 
@@ -43,18 +53,23 @@
       FB.login(function(response) {
           if (response.authResponse) {
               // connected
+			alert("connected");
+
+ 	      //checkLoginState();
               window.location.reload();
           } else {
               // cancelled
-              alert('User cancelled login or did not fully authorize.');
+              	replace_login(false);
+		alert('User cancelled login or did not fully authorize.');
           }
       });
   }
 
-  function replace_login(){
-       FB.api('/me', function(response) {
-           $('.fb_login').html('<span class="fb_logged_in">' + response.name + ', You are already logged in with Facebook!</span>');
-       });
+  function replace_login(logged_in){
+    var elem = document.getElementById("fb-login-btn");
+    if (elem.innerHTML=="Login with Facebook" && logged_in) elem.innerHTML = "Logout";
+    else elem.innerHTML = "Login with Facebook";
+  alert(elem.innerHTML + " and " + logged_in );
   }
 
   window.fbAsyncInit = function() {
