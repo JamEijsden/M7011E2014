@@ -12,7 +12,7 @@
       testAPI();
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
-      document.location = "localhost:9999";
+      document.location.href = "localhost:9999";
       document.getElementById('status').innerHTML = 'Please log ' +
         'into this app.';
     } else {
@@ -80,3 +80,4 @@
         document.getElementById('photo').src="https://graph.facebook.com/"+response.id+"/picture"; 
     });
   }
+
