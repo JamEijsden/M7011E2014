@@ -32,6 +32,24 @@
     });
   }
 
+  function login() {
+      FB.login(function(response) {
+          if (response.authResponse) {
+              // connected
+              window.location.reload();
+          } else {
+              // cancelled
+              alert('User cancelled login or did not fully authorize.');
+          }
+      });
+  }
+
+  function replace_login(){
+       FB.api('/me', function(response) {
+           $('.fb_login').html('<span class="fb_logged_in">' + response.name + ', You are already logged in with Facebook!</span>');
+       });
+  }
+
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '562407890559656',
