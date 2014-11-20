@@ -24,34 +24,17 @@
 </div>
 
 <div class="containter" id="facebook">
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '562407890559656',
-      xfbml      : true,
-      version    : 'v2.2'
-    });
-  };
 
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-</script>
-<div id="fb-root"></div>
-<!-- LOGIN BUTTON FROM FACEBOOK-->
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/sv_SE/sdk.js#xfbml=1&appId=562407890559656&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+    <div id="fb-root"></div>
 
-<!--THE ACCUAL LOGIN BUTTON ###################################################################-->
+ <script src="/static/js/facebook.js"></script>
+      
+  
+
+<div id="status"> </div>
+
+
+
 <div class="container" id="facebook-login">
 </div>
 <div class="container" id="facebook-like">
