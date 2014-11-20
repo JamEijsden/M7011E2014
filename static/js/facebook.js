@@ -8,6 +8,8 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
+      var div_FBLogin = document.getElementById('facebook-login');
+      div_FBLogin.style.display = 'none';
       testAPI();
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
