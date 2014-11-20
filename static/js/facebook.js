@@ -66,8 +66,9 @@
   }
 
   function replace_login(logged_in){
+    alert(elem.innerHTML);
     var elem = document.getElementById("fb-login-btn");
-    if (elem.innerHTML=="Login with Facebook" && logged_in) elem.innerHTML = "Logout";
+    if ((elem.innerHTML=="Login with Facebook") && logged_in) elem.innerHTML = "Logout";
     else elem.innerHTML = "Login with Facebook";
   alert(elem.innerHTML + " and " + logged_in );
   }
