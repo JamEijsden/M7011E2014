@@ -2,7 +2,9 @@
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
     console.log(response);
-    var div_FBLogin = document.getElementById('facebook-login');
+    var div_FBLogin = document.getElementById('fb-login');
+    var div_FBLogout = document.getElementById('fb-logout');
+    var div_FBLike = document.getElementById('fb-like');
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation
@@ -10,16 +12,21 @@
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
       div_FBLogin.style.display = 'none';
+      div_FBLogout.style.display = 'inline';
+      div_FBLike.style.display = 'inline';
       testAPI();
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
       div_FBLogin.style.display = 'inline';
+      div_FBLogout.style.display = 'none';
+      div_FBLike.style.display = 'none';
      
     } else {
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
       div_FBLogin.style.display = 'inline';
-      
+      div_FBLogout.style.display = 'none';
+      div_FBLike.style.display = 'none';
     }
   }
 
