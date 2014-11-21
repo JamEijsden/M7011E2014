@@ -2,7 +2,7 @@
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
     console.log(response);
-    var div_FBLogin = document.getElementById('fb-login');
+    //var div_FBLogin = document.getElementById('fb-login');
     //var div_FBLike = document.getElementById('fb-liike');
    
     // The response object is returned with a status field that lets the
@@ -11,14 +11,14 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
-      div_FBLogin.style.display = 'inline';
+    //  div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'inline';
       replace_login(true);
       testAPI();
 
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
-      div_FBLogin.style.display = 'inline';
+      //div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'none';
       replace_login(false);
 
@@ -26,7 +26,7 @@
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
       replace_login(false);
-      div_FBLogin.style.display = 'inline';
+      //div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'none';
 
     }
@@ -62,12 +62,12 @@
   }
 
   function replace_login(logged_in){
-    var elem = document.getElementById("fb-login-btn");
+    //var elem = document.getElementById("fb-login-btn");
     if ((elem.innerHTML=="Login with Facebook") && logged_in){
-	elem.innerHTML = "Logout";
+	//elem.innerHTML = "Logout";
 	elem.onclick = function() { logout(); };
     } else {
- 	elem.innerHTML = "Login with Facebook";
+ 	//elem.innerHTML = "Login with Facebook";
 	elem.onlick = function() { login(); };		
     }
   }
