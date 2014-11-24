@@ -18,16 +18,16 @@ type User struct {
 func main() {
 	m := mux.NewRouter()
 	// fetch all users
-	m.HandleFunc("/users", getAllUsers).Methods("GET")
+	m.Handle("/users", handler(getAllUsers)).Methods("GET")
 
 	//fetch a user
-	m.HandleFunc("/user/{key}", getUser).Methods("GET")
+	m.Handle("/user/{key}", handler(getUser)).Methods("GET")
 
 	//delete user
-	m.HandleFunc("/user/{key}", deleteUser).Methods("DELETE")
+	m.Handle("/user/{key}", handler(deleteUser)).Methods("DELETE")
 
 	//add user
-	m.HandleFunc("/user/{key}", addUser).Methods("PUT")
+	m.Handle("/user/{key}", handler(addUser)).Methods("PUT")
 
 	http.Handle("/", m)
 
@@ -36,14 +36,19 @@ func main() {
 	// everything else fails
 	//m.HandleFunc("/{path:.*}", g)
 }
+func deleteUser(rw http.ResponseWriter, req *http.Request) {
 
-func getAllUsers(w http.ResponseWriter, r *http.Request) {
-	//vars := mux.Vars(r)
-	//id := vars["key"]
-	fmt.Printf(w, "Page for displaying users")
 }
 
-func getUser(rw http.ResponseWriter, req *http.Request) {
+func getAllUsers(w http.ResponseWriter, r *http.Request) string {
+	//vars := mux.Vars(r)
+	//id := vars["key"]
+	//fmt.Printf(w, "Page for displaying users")
+
+	return string("all the uses")
+}
+
+func getUser(rw http.ResponseWriter, req *http.Request) string {
 	vars := mux.Vars(req)
 	id := vars["key"]
 
@@ -55,7 +60,8 @@ func getUser(rw http.ResponseWriter, req *http.Request) {
 	//add the other lines
 	// then
 	ans := usr.jsonResponseUser()
-	fmt.Printf(rw, string(ans))
+	//fmt.Printf(rw, string(ans))
+	return string(ans)
 
 }
 
