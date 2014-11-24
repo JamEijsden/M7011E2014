@@ -22,6 +22,11 @@ import (
 //	defer db.Close()
 
 //}
+
+type user struct {
+	userID, firstName, lastname string
+}
+
 func connect() {
 	username := "root"
 	password := "M7017E"
