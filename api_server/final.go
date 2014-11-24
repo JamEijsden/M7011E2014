@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	//"io/ioutil"
 	"log"
-	"math"
+	//"math"
 	"net/http"
 	"strconv"
 
@@ -23,9 +23,9 @@ type handlerError struct {
 // user struct
 
 type User struct {
-	UserID    math.MaxInt64 `json:"userID"`
-	FirstName string        `json:"firstName"`
-	LastName  string        `json:"lastName"`
+	UserID    uint64 `json:"userID"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
 
 // a custom type that we can use for handling errors and formatting responses
@@ -80,7 +80,7 @@ func listUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handlerErr
 */
 func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
 	// mux.Vars grabs variables from the path
-	param := mux.Vars(r)["id"]
+	//param := mux.Vars(r)["id"]
 	returnable := string("getuser might work")
 
 	return returnable, nil
@@ -93,7 +93,7 @@ func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
 
 	returnable := string("adduser maby?")
-	return payload, nil
+	return returnable, nil
 }
 
 /*
@@ -107,12 +107,8 @@ func removeUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerEr
 	if e != nil {
 		return nil, &handlerError{e, "Id should be an integer", http.StatusBadRequest}
 	}
+	fmt.Println(id)
 	// this is jsut to check to see if the book exists
-	_, index := getBookById(id)
-
-	if index < 0 {
-		return nil, &handlerError{nil, "Could not find entry " + param, http.StatusNotFound}
-	}
 
 	returnable := string("removeUser")
 	return returnable, nil
