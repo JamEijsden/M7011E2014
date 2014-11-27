@@ -4,7 +4,6 @@
     console.log(response);
     //var div_FBLogin = document.getElementById('fb-login');
     //var div_FBLike = document.getElementById('fb-liike');
-   
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation

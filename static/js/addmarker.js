@@ -15,7 +15,7 @@ function placeMarker(location) {
                 map: map,
                 draggable:true,
                 animation: google.maps.Animation.DROP,
-                title:"HEJ",
+                title:"New Marker",
               icon: "http://maps.google.com/mapfiles/ms/micons/blue.png"
             });
     var input = $('#loc');
