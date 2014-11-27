@@ -14,6 +14,9 @@
     //  div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'inline';
       replace_login(true);
+      if(document.location.href == "http://trolle.asuscomm.com:9999/") {
+		document.location.href = "http://trolle.asuscomm.com:9999/test/";
+	}
       testAPI();
 
     } else if (response.status === 'not_authorized') {
@@ -51,8 +54,8 @@
           if (response.authResponse) {
               // connected
 
- 	      checkLoginState();
-	      window.location.reload();
+	    checkLoginState();
+	      window.location.href = "http://trolle.asuscomm.com:9999/test/";
           } else {
               // cancelled
               replace_login(false);
@@ -62,12 +65,12 @@
   }
 
   function replace_login(logged_in){
-    //var elem = document.getElementById("fb-login-btn");
+    var elem = document.getElementById("fb-login-btn");
     if ((elem.innerHTML=="Login with Facebook") && logged_in){
-	//elem.innerHTML = "Logout";
+	elem.innerHTML = "Logout";
 	elem.onclick = function() { logout(); };
     } else {
- 	//elem.innerHTML = "Login with Facebook";
+ 	elem.innerHTML = "Login with Facebook";
 	elem.onlick = function() { login(); };		
     }
   }
