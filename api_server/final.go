@@ -7,6 +7,8 @@ import (
 	//"io/ioutil"
 	"log"
 	//"math"
+	"database/sql"
+	"github.com/ziutek/mymysql/godrv"
 	"net/http"
 	"strconv"
 
@@ -26,6 +28,24 @@ type User struct {
 	UserID    uint64 `json:"userID"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
+}
+
+// GLOBAL VARIABLE FOR CONNECTING TO DB
+//var db *sql.DB
+
+// connect to db using standard Go database/sql API
+// use whatever database/sql driver you wish
+db, err := sql.Open("mymysql", "tcp:localhost:3306*mydb/myuser/mypassword")
+
+func connect() {
+	username := "root"
+	password := "M7017E"
+	db = mysql.New("tcp", "127.0.0.1:3306", user, password)
+
+	err := db.Connect()
+	if err != nil {
+		panic(err)
+	}
 }
 
 // a custom type that we can use for handling errors and formatting responses
@@ -79,11 +99,27 @@ func listUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handlerErr
 
 */
 func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
-	// mux.Vars grabs variables from the path
-	//param := mux.Vars(r)["id"]
-	returnable := string("getuser might work")
+	mux.Vars(r)["id"] //grabs variables from the path
+	param := mux.Vars(r)["id"]
+	row, res, err := db.QueryRow("select * from users where userID =?", param)
+	if err == sql.ErrNoRows {
+		log.Printf("No user with that ID")
+	}
 
-	return returnable, nil
+	if err != nil {
+		panic(err)
+	}
+	user := new (User);
+	user.UserID = row[0]
+	user.FirstName = row[1]
+	user.LastName = row[2]
+
+
+
+
+	//returnable := json.Marshal(user)
+
+	return user, nil
 }
 
 /*
@@ -116,9 +152,12 @@ func removeUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerEr
 
 func main() {
 	// command line flags
-	port := flag.Int("port", 8080, "port to serve on")
+	port := flag.Int("port", 8888, "port to serve on")
 	dir := flag.String("directory", "web/", "directory of web files")
 	flag.Parse()
+
+	// connect to database
+	connect()
 
 	// handle all requests by serving a file of the same name
 	fs := http.Dir(*dir)
@@ -128,7 +167,8 @@ func main() {
 	router := mux.NewRouter()
 	router.Handle("/", http.RedirectHandler("/static/", 302))
 	router.Handle("/users", handler(listUsers)).Methods("GET")
-	router.Handle("/users", handler(addUser)).Methods("POST")
+	// hämta ut infon för att lägga till ny
+	router.Handle("/users/{info}", handler(addUser)).Methods("POST")
 	router.Handle("/users/{id}", handler(getUser)).Methods("GET")
 	router.Handle("/users/{id}", handler(removeUser)).Methods("DELETE")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileHandler))
@@ -142,7 +182,7 @@ func main() {
 
 	log.Printf("Running on port %d\n", *port)
 
-	addr := fmt.Sprintf("127.0.0.1:%d", *port)
+	addr := fmt.Sprintf("192.168.1.230:%d", *port)
 	// this call blocks -- the progam runs here forever
 	err := http.ListenAndServe(addr, nil)
 	fmt.Println(err.Error())
