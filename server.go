@@ -25,7 +25,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
-	if t, err := template.ParseFiles("_testBase.html", "templates/about.html"); err != nil {
+	if t, err := template.ParseFiles("_Base.html", "templates/about.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
@@ -35,9 +35,9 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func testHandler(w http.ResponseWriter, r *http.Request) {
+func mapHandler(w http.ResponseWriter, r *http.Request) {
 
-	if t, err := template.ParseFiles("_testBase.html", "templates/test.html"); err != nil {
+	if t, err := template.ParseFiles("_Base.html", "templates/map.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
@@ -60,6 +60,19 @@ func addStairsHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func stairsHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("YOLO POPUP")
+
+	if t, err := template.ParseFiles("_stair.html", "templates/addstairs.html"); err != nil {
+		// Something gnarly happened.
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	} else {
+		// return to client via t.Execute
+		t.Execute(w, nil)
+	}
+
+}
+
 func backHandler(w http.ResponseWriter, r *http.Request) {
 
 }
@@ -70,8 +83,9 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/about/", aboutHandler)
-	http.HandleFunc("/test/", testHandler)
+	http.HandleFunc("/test/", mapHandler)
 	http.HandleFunc("/test/addStairs/", addStairsHandler)
+	http.HandleFunc("/test/stairs/", stairsHandler)
 
 	var i int
 	fmt.Println("Run server on:\n1. localhost:9999\n2. 192.168.1.230:9999\nChoose a connection(1 or 2).")
