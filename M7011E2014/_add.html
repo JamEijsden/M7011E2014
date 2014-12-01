@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DIBS</title>
+
+<link href="/static/css/bootstrap.css" type="text/css" rel="stylesheet">
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<style type="text/css">
+    body{
+    	padding-top: 35px;
+    }
+</style>
+{{template "head" . }}
+
+</head>
+<body>
+<!--<div class="container" id="top-box">
+
+<div class="container" id="top-title">
+<h1>DIBS</h1>
+</div>
+</div>
+-->
+
+<div class="container" style="margin: 15px;">
+	<div class="jumbotron">
+    {{template "title" . }}
+		{{template "content" . }}		
+	</div>
+	<hr>
+	<div class="row">
+		<div class="col-xs-12">
+			<footer>
+				<p>Confirm button down here?</p>
+			</footer>
+		</div>
+	</div>
+</div>
+</body>
+</html>  

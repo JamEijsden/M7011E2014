@@ -8,7 +8,7 @@ import (
 	"log"
 	//"math"
 	"database/sql"
-	_ "github.com/ziutek/mymysql/godrv"
+	"github.com/ziutek/mymysql/godrv"
 	"net/http"
 	"strconv"
 
@@ -28,7 +28,6 @@ type User struct {
 	UserID    uint64 `json:"userID"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
-	IdToken   string `json:"idToken"`
 }
 
 // GLOBAL VARIABLE FOR CONNECTING TO DB
@@ -36,7 +35,7 @@ type User struct {
 
 // connect to db using standard Go database/sql API
 // use whatever database/sql driver you wish
-//db, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+db, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
 
 /**
 func connect() {
@@ -106,15 +105,9 @@ func listUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handlerErr
 */
 func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
 	//mux.Vars(r)["id"] grabs variables from the path
+	
 	param := mux.Vars(r)["id"]
-	fmt.Println(param)
-	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer con.Close()
-
-	row, err := con.Query("select * from users where uid =?", param)
+	row, _, err := db.Query("select * from users where uid =?", param)
 	if err == sql.ErrNoRows {
 		log.Printf("No user with that ID")
 	}
@@ -122,29 +115,15 @@ func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	if err != nil {
 		panic(err)
 	}
-
+	fmt.Println(row)
 	user := new(User)
-	for row.Next() {
-		var idToken string
-		var uid uint64
-		var name, lastname string
+//	user.UserID = row[0]
+//	user.FirstName = row[1]
+//	user.LastName = row[2]
 
-		fmt.Println(row)
 
-		if err := row.Scan(&uid, &name, &lastname, &idToken); err != nil {
-			log.Fatal(err)
-		}
-		user.IdToken = idToken
-		user.UserID = uid
-		user.FirstName = name
-		user.LastName = lastname
-	}
-	//fmt.Println(row)
-	//	user.UserID = row[0]
-	//	user.FirstName = row[1]
-	//	user.LastName = row[2]
 
-	//returnable := json.Marshal(user)
+
 	//returnable := json.Marshal(user)
 
 	return user, nil
@@ -185,7 +164,7 @@ func main() {
 	flag.Parse()
 
 	// connect to database
-	//	connect()
+//	connect()
 
 	// handle all requests by serving a file of the same name
 	fs := http.Dir(*dir)
