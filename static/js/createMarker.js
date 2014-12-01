@@ -7,7 +7,7 @@ function createMarker(location) {
       title: ""+location
   });   
  
-  contentString = "<h4>"+marker.title+"</h4><img src='http://media.bymk.se/2014/06/katten_jarvis.jpg' alt='Smiley face' height='300' width='400'>";
+  contentString = "<h4>"+marker.title+"</h4><img src='http://media.bymk.se/2014/06/katten_jarvis.jpg' alt='Smiley face' height='300' width='400'> <form action='stairs/thisisatest'); return false><input type='submit' class='btn btn-primary' value=Add Location' ></form>";
   var infowindow = new google.maps.InfoWindow({
     content: contentString
   });

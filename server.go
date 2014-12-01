@@ -24,8 +24,19 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func aboutHandler(w http.ResponseWriter, r *http.Request) {
+func homeHandler(w http.ResponseWriter, r *http.Request) {
 	if t, err := template.ParseFiles("_Base.html", "templates/about.html"); err != nil {
+		// Something gnarly happened.
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	} else {
+		// return to client via t.Execute
+		t.Execute(w, nil)
+	}
+
+}
+
+func userHandler(w http.ResponseWriter, r *http.Request) {
+	if t, err := template.ParseFiles("_Base.html", "templates/user.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
@@ -63,7 +74,20 @@ func addStairsHandler(w http.ResponseWriter, r *http.Request) {
 func stairsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("YOLO POPUP")
 
-	if t, err := template.ParseFiles("_stair.html", "templates/addstairs.html"); err != nil {
+	if t, err := template.ParseFiles("_stair.html", "templates/stairs.html"); err != nil {
+		// Something gnarly happened.
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	} else {
+		// return to client via t.Execute
+		t.Execute(w, nil)
+	}
+
+}
+
+func photosHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("YOLO POPUP")
+
+	if t, err := template.ParseFiles("_stair.html", "templates/stairs.html"); err != nil {
 		// Something gnarly happened.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
@@ -82,10 +106,12 @@ func main() {
 	//fs := justFilesFilesystem{http.Dir("/static")}
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.HandleFunc("/", handler)
-	http.HandleFunc("/about/", aboutHandler)
-	http.HandleFunc("/test/", mapHandler)
-	http.HandleFunc("/test/addStairs/", addStairsHandler)
-	http.HandleFunc("/test/stairs/", stairsHandler)
+	http.HandleFunc("/home/", homeHandler)
+	http.HandleFunc("/user/", userHandler)
+	http.HandleFunc("/map/", mapHandler)
+	http.HandleFunc("/map/addStairs/", addStairsHandler)
+	http.HandleFunc("/map/stairs/", stairsHandler)
+	http.HandleFunc("/map/stairs/photos", photosHandler)
 
 	var i int
 	fmt.Println("Run server on:\n1. localhost:9999\n2. 192.168.1.230:9999\nChoose a connection(1 or 2).")

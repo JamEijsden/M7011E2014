@@ -7,6 +7,7 @@
 <link href="/static/css/bootstrap.css" type="text/css" rel="stylesheet">
 <script src="https://maps.googleapis.com/maps/api/js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+ <script src="/static/js/facebook.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <style type="text/css">
     body{
@@ -17,21 +18,14 @@
 
 </head>
 <body>
-<div class="container" id="top-box">
+<div class="container" style="text-align:center;">
 
-<div class="container" id="top-title">
-<h1>DIBS</h1>
-</div>
+<div id="fb-root"></div>
 
-<div class="containter" id="facebook">
 
-    <div id="fb-root"></div>
-
- <script src="/static/js/facebook.js"></script>
       
   
 
-<div id="status"> </div>
 
 
 
@@ -45,18 +39,23 @@
 </div>
 </div>
 
-<div class="container" id="sidebar-info">   
-	<div class="container" id="profile-photo">
+<div class="container" style="width:20%; float: left; text-align: center;" >
+	<div class="row">
+		<img src="/static/image/dibs.png"  style="width:150px; height:100px;">
+	</div>
+
+	<div class="row" >
 		<img src="" style="width:100px; height:100px;" id="photo" alt="Smiley">
 
 	</div>
-
-       <ul class="nav nav-pills nav-stacked" role="tablist">
-        <li><a href="stair/" >Stair</a></li>
-		<li><a href="stair/photos/">Photos</a></li>       
-		<li><div class="fb-login-button" data-max-rows="3" data-size="medium" data-show-faces="false" data-auto-logout-link="true"></div></li>
+	<div class="row">
+      <ul class="nav nav-pills nav-stacked" role="tablist">
+        <li><a href="/map/stairs/" >About</a></li>
+		<li><a href="photos/">Photos</a></li>       
+		<li><div class="fb-login-button" id="fb-button" data-max-rows="3" data-size="medium" data-show-faces="false" data-auto-logout-link="true"></div></li>
 
       </ul>
+     </div>
 </div>
 
 
