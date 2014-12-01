@@ -31,23 +31,28 @@ type User struct {
 }
 
 // GLOBAL VARIABLE FOR CONNECTING TO DB
-//var db *sql.DB
+//var db *sql.db
 
 // connect to db using standard Go database/sql API
 // use whatever database/sql driver you wish
-db, err := sql.Open("mymysql", "tcp:localhost:3306*mydb/myuser/mypassword")
+db, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
 
+/**
 func connect() {
 	username := "root"
-	password := "M7017E"
-	db = mysql.New("tcp", "127.0.0.1:3306", user, password)
-
+	password := "jaam"
+	database := "M7011E"
+	fmt.Println("HALLO")
+	db = mysql.New("tcp","localhost:3306", username, password, database)
+	fmt.Println("HALLO2")
 	err := db.Connect()
+	fmt.Println("HALLO3")
 	if err != nil {
 		panic(err)
 	}
-}
 
+}
+**/
 // a custom type that we can use for handling errors and formatting responses
 type handler func(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError)
 
@@ -99,9 +104,10 @@ func listUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handlerErr
 
 */
 func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
-	mux.Vars(r)["id"] //grabs variables from the path
+	//mux.Vars(r)["id"] grabs variables from the path
+	
 	param := mux.Vars(r)["id"]
-	row, res, err := db.QueryRow("select * from users where userID =?", param)
+	row, _, err := db.Query("select * from users where uid =?", param)
 	if err == sql.ErrNoRows {
 		log.Printf("No user with that ID")
 	}
@@ -109,10 +115,11 @@ func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	if err != nil {
 		panic(err)
 	}
-	user := new (User);
-	user.UserID = row[0]
-	user.FirstName = row[1]
-	user.LastName = row[2]
+	fmt.Println(row)
+	user := new(User)
+//	user.UserID = row[0]
+//	user.FirstName = row[1]
+//	user.LastName = row[2]
 
 
 
@@ -157,7 +164,7 @@ func main() {
 	flag.Parse()
 
 	// connect to database
-	connect()
+//	connect()
 
 	// handle all requests by serving a file of the same name
 	fs := http.Dir(*dir)
@@ -182,7 +189,7 @@ func main() {
 
 	log.Printf("Running on port %d\n", *port)
 
-	addr := fmt.Sprintf("192.168.1.230:%d", *port)
+	addr := fmt.Sprintf("192.168.1.6:%d", *port)
 	// this call blocks -- the progam runs here forever
 	err := http.ListenAndServe(addr, nil)
 	fmt.Println(err.Error())
