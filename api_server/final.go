@@ -31,7 +31,7 @@ type User struct {
 	IdToken   string `json:"idToken"`
 }
 
-type Location struct {
+type Stair struct {
 	Id       uint64 `json:"id"`
 	Position string `json:"position"`
 	Name     string `json:"stairname"`
@@ -188,6 +188,28 @@ func removeUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerEr
 
 func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
 	data, e := ioutil.ReadAll(r.Body)
+	if e != nil {
+		return nil, &handlerError{e, "Can't read request", http.StatusBadRequest}
+	}
+	var payload Stair
+	e = json.Unmarshal(data, &payload)
+	if e != nil {
+		return Stair{}, &handlerError{e, "Could'nt parse JSON", http.StatusBadRequest}
+	}
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer con.Close()
+
+	row, err := con.Query("select * from users where uid =?", param)
+	if err == sql.ErrNoRows {
+		log.Printf("No user with that ID")
+	}
+
+	if err != nil {
+		panic(err)
+	}
 
 }
 func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
