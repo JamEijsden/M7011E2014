@@ -31,6 +31,14 @@ type User struct {
 	IdToken   string `json:"idToken"`
 }
 
+type Location struct {
+	Id       uint64 `json:"id"`
+	Position string `json:"position"`
+	Name     string `json:"stairname"`
+	User     uint64 `json:"user"`
+	Photo    string `json:"photo"`
+}
+
 // GLOBAL VARIABLE FOR CONNECTING TO DB
 //var db *sql.db
 
@@ -178,6 +186,16 @@ func removeUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerEr
 	return returnable, nil
 }
 
+func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	data, e := ioutil.ReadAll(r.Body)
+
+}
+func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+
+}
+func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+
+}
 func main() {
 	// command line flags
 	port := flag.Int("port", 8888, "port to serve on")
@@ -196,17 +214,15 @@ func main() {
 	router.Handle("/", http.RedirectHandler("/static/", 302))
 	router.Handle("/users", handler(listUsers)).Methods("GET")
 	// hämta ut infon för att lägga till ny
-	router.Handle("/users/{info}", handler(addUser)).Methods("POST")
+	router.Handle("/users", handler(addUser)).Methods("POST")
 	router.Handle("/users/{id}", handler(getUser)).Methods("GET")
 	router.Handle("/users/{id}", handler(removeUser)).Methods("DELETE")
+	router.Handle("/stair", handler(addStair)).Methods("POST")
+	router.Handle("/stair/{id}", handler(getStair)).Methods("GET")
+	router.Handle("/stairs", handler(getAllStairs)).Methods("GET")
+
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileHandler))
 	http.Handle("/", router)
-
-	// bootstrap some data
-	//books = append(books, book{"Ender's Game", "Orson Scott Card", getNextId()})
-	//books = append(books, book{"Code Complete", "Steve McConnell", getNextId()})
-	//books = append(books, book{"World War Z", "Max Brooks", getNextId()})
-	//books = append(books, book{"Pragmatic Programmer", "David Thomas", getNextId()})
 
 	log.Printf("Running on port %d\n", *port)
 
