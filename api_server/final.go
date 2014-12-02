@@ -100,13 +100,38 @@ func (fn handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 /*
 	List all users in the db
-
+	!READY FOR TESTING!
 */
-func listUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
-	var hej string
-	hej = string("list all users for the db")
-	//return books, nil
-	return hej, nil
+func listAllUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		log.Fatal(err)
+	}
+	defer con.Close()
+
+	rows, err := con.Query("select name, uid from users")
+	if err != nil {
+		return nil, &handlerError{err, "Error in DB", http.StatusInternalServerError}
+		//log.Printf("No user with that ID")
+	}
+
+	var result []User // create an array of stairs
+	var uid uint64
+	var name string
+
+	for rows.Next() {
+		user := new(User)
+		err = rows.Scan(&name, &uid)
+		if err != nil {
+			return result, &handlerError{err, "Error in DB", http.StatusInternalServerError}
+		}
+		user.FirstName = name
+		user.UserID = uid
+		result = append(result, *user)
+	}
+
+	return result, nil
 }
 
 /*
@@ -162,12 +187,46 @@ func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 
 /*
 	ADD USER TO DB
+	!DONE for TESTING!
 
 */
 func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
 
-	returnable := string("adduser maby?")
-	return returnable, nil
+	data, e := ioutil.ReadAll(req.Body)
+
+	fmt.Println(string(data))
+	if e != nil {
+		fmt.Println("AJAJAJ 1111")
+		fmt.Println(string(data))
+		return nil, &handlerError{e, "Can't read request", http.StatusBadRequest}
+	}
+
+	// create new user called payload
+	var payload User
+	e = json.Unmarshal(data, &payload)
+	if e != nil {
+		fmt.Println("SATAN")
+		fmt.Println(e)
+		fmt.Println("kunde inte unmarshla detta:")
+		fmt.Println(payload)
+		return Stair{}, &handlerError{e, "Could'nt parse JSON", http.StatusInternalServerError}
+	}
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		fmt.Println("Kunde inte öppna DB")
+		return nil, &handlerError{err, "Internal server error", http.StatusInternalServerError}
+	}
+	defer con.Close()
+
+	_, err = con.Exec("insert into users( name, lastname, idToken) values(?,?,?)", payload.FirstName, payload.LastName, payload.IdToken)
+
+	if err != nil {
+		fmt.Println("Kunde inte lägga till :/")
+		return nil, &handlerError{err, "Error adding to DB", http.StatusInternalServerError}
+	}
+
+	return payload, nil
+	//row, err := con.Query("select * from users where uid =?", param)
 }
 
 /*
@@ -282,8 +341,7 @@ func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerE
 
 /*
 	Get all stairs from DB
-	!READY FOR TESTINF
-	!
+	!READY FOR TESTING!
 
 */
 func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
@@ -335,7 +393,7 @@ func main() {
 	// setup routes
 	router := mux.NewRouter()
 	router.Handle("/", http.RedirectHandler("/static/", 302))
-	router.Handle("/users", handler(listUsers)).Methods("GET")
+	router.Handle("/users", handler(listAllUsers)).Methods("GET")
 	// hämta ut infon för att lägga till ny
 	router.Handle("/users", handler(addUser)).Methods("POST")
 	router.Handle("/users/{id}", handler(getUser)).Methods("GET")
