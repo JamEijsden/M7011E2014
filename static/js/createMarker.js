@@ -7,15 +7,18 @@ function createMarker(location) {
       title: ""+location
   });   
  
-  contentString = "<h4>"+marker.title+"</h4><img src='http://media.bymk.se/2014/06/katten_jarvis.jpg' alt='Smiley face' height='300' width='400'> <form action='stairs/thisisatest'); return false><input type='submit' class='btn btn-primary' value=Add Location' ></form>";
+  contentString = "<h4>"+marker.title+"</h4>"+
+  "<img src='http://media.bymk.se/2014/06/katten_jarvis.jpg' alt='Smileyface' height='300' width='400'><input type='button' class='btn btn-primary' onclick='getJson();' value=Add Location'>";
+
   var infowindow = new google.maps.InfoWindow({
     content: contentString
   });
-
+  
   google.maps.event.addListener(marker, 'click', function () {
           currentMark = marker;
           map.setCenter(currentMark.position)
           infowindow.open(map, marker);
+
 
 });
 google.maps.event.addListener(infowindow,'closeclick',function(){
@@ -24,4 +27,28 @@ google.maps.event.addListener(infowindow,'closeclick',function(){
    // then, remove the infowindows name from the array
 });
 
+}
+function getJson(){
+//'{"userID":1,"firstName":"jimmiie","lastName":"van eijsden","idToken":"12983682682"}'
+var json = httpGet();
+    obj = JSON.parse(json);
+    console.log(obj);
+document.getElementById("loadhere").innerHTML = obj;
+//alert(obj);
+
+}
+
+function httpGet()
+{
+    var xmlHttp = null;
+
+    xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "http://79.136.28.106:8888/users/1", false );
+    xmlHttp.send( null );
+    xmlhttp.onreadystatechange=function() {
+     if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+      return xmlHttp.responseText;
+      }
+}
+    return "TOMTE";
 }
