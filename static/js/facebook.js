@@ -13,8 +13,8 @@
     //  div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'inline';
       //replace_login(true);
-      if(document.location.href == "http://trolle.asuscomm.com:9999/") {
-		document.location.href = "http://trolle.asuscomm.com:9999/test/";
+      if(document.location.href == "http://trollegeuna.se:9999/") {
+		document.location.href = "http://trollegeuna.se:9999/test/";
 	}
       testAPI();
 
@@ -54,7 +54,7 @@
               // connected
 
 	    checkLoginState();
-	      window.location.href = "http://trolle.asuscomm.com:9999/test/";
+	      window.location.href = "http://trollegeuna.se:9999/test/";
           } else {
               // cancelled
               replace_login(false);

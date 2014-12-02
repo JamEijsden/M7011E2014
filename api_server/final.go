@@ -282,6 +282,8 @@ func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerE
 
 /*
 	Get all stairs from DB
+	!READY FOR TESTINF
+	!
 
 */
 func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
