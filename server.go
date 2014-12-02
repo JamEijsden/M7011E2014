@@ -120,8 +120,8 @@ func main() {
 		fmt.Println("Server running on localhost:9999")
 		http.ListenAndServe("localhost:9999", nil)
 	} else if i == 2 {
-		fmt.Println("Server running on 192.168.1.230:9999")
-		http.ListenAndServe("192.168.1.230:9999", nil)
+		fmt.Println("Server running on 192.168.1.6:9999")
+		http.ListenAndServe("192.168.1.6:9999", nil)
 	} else {
 		fmt.Println("Not a valid option")
 	}
