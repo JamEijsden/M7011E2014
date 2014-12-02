@@ -1,14 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"flag"
 	"fmt"
-	//"io/ioutil"
+	_ "github.com/ziutek/mymysql/godrv"
+	"io/ioutil"
 	"log"
 	//"math"
-	"database/sql"
-	_ "github.com/ziutek/mymysql/godrv"
 	"net/http"
 	"strconv"
 
@@ -93,6 +93,7 @@ func (fn handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// send the response and log
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write(bytes)
 	log.Printf("%s %s %s %d", r.RemoteAddr, r.Method, r.URL, 200)
 }
@@ -110,6 +111,7 @@ func listUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handlerErr
 
 /*
 	Get a user from the db
+	!DONE FOR TESTING!
 
 */
 func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
@@ -186,38 +188,135 @@ func removeUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerEr
 	return returnable, nil
 }
 
+/*
+	Add stair to DB
+	!Done for testing!
+
+*/
 func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
-	data, e := ioutil.ReadAll(r.Body)
+	data, e := ioutil.ReadAll(req.Body)
+
+	fmt.Println(string(data))
 	if e != nil {
+		fmt.Println("AJAJAJ 1111")
+		fmt.Println(string(data))
 		return nil, &handlerError{e, "Can't read request", http.StatusBadRequest}
 	}
 	var payload Stair
 	e = json.Unmarshal(data, &payload)
 	if e != nil {
-		return Stair{}, &handlerError{e, "Could'nt parse JSON", http.StatusBadRequest}
+		fmt.Println("SATAN")
+		fmt.Println(e)
+		fmt.Println("kunde inte unmarshla detta:")
+		fmt.Println(payload)
+		return Stair{}, &handlerError{e, "Could'nt parse JSON", http.StatusInternalServerError}
 	}
 	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
 	if err != nil {
+		fmt.Println("Kunde inte öppna DB")
+		return nil, &handlerError{err, "Internal server error", http.StatusInternalServerError}
+	}
+	defer con.Close()
+	//jimmie vill ha statiskt...... fultfultfult!!
+	//fixar ickestatiskt när han har bättre tankar:P
+	//typ om dobbe eller dobbelina
+	// eller kanske linkeboda??
+	//		OOOOOOOOO
+	_, err = con.Exec("insert into Stairs(position,stairname,uid,photo) values(?,?,1,?)", payload.Position, payload.Name, payload.Photo)
+
+	if err != nil {
+		fmt.Println("Kunde inte lägga till :/")
+		return nil, &handlerError{err, "Error adding to DB", http.StatusInternalServerError}
+	}
+
+	return payload, nil
+	//row, err := con.Query("select * from users where uid =?", param)
+}
+
+/*
+	Get stair from DB
+	!READY FOR TESTING!
+*/
+func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	param := mux.Vars(req)["id"]
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
 		log.Fatal(err)
 	}
 	defer con.Close()
 
-	row, err := con.Query("select * from users where uid =?", param)
+	row, err := con.Query("select * from Stairs where id =?", param)
 	if err == sql.ErrNoRows {
-		log.Printf("No user with that ID")
+		return nil, &handlerError{err, "Error stair not found", http.StatusBadRequest}
+		//log.Printf("No user with that ID")
 	}
 
 	if err != nil {
-		panic(err)
+		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
+		//panic(err)
 	}
 
-}
-func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	stair := new(Stair)
+	for row.Next() {
+		var position, stairname, photo string
+		var uid, id uint64
 
+		fmt.Println(row)
+
+		if err := row.Scan(&id, &position, &stairname, &uid, &photo); err != nil {
+			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
+			//log.Fatal(err)
+		}
+
+		stair.Id = id
+		stair.Name = stairname
+		stair.Photo = photo
+		stair.User = uid
+		stair.Position = position
+
+	}
+
+	return stair, nil
 }
+
+/*
+	Get all stairs from DB
+
+*/
 func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		log.Fatal(err)
+	}
+	defer con.Close()
 
+	rows, err := con.Query("select id, position, stairname from Stairs")
+	if err != nil {
+		return nil, &handlerError{err, "Error in DB", http.StatusInternalServerError}
+		//log.Printf("No user with that ID")
+	}
+
+	var result []Stair // create an array of stairs
+	var id uint64
+	var position, stairname string
+
+	for rows.Next() {
+		stair := new(Stair)
+		err = rows.Scan(&id, &position, &stairname)
+		if err != nil {
+			return result, &handlerError{err, "Error in DB", http.StatusInternalServerError}
+		}
+		stair.Id = id
+		stair.Position = position
+		stair.Name = stairname
+		result = append(result, *stair)
+	}
+
+	return result, nil
 }
+
 func main() {
 	// command line flags
 	port := flag.Int("port", 8888, "port to serve on")
