@@ -28,30 +28,3 @@ google.maps.event.addListener(infowindow,'closeclick',function(){
 });
 
 }
-function getJson(){
-//'{"userID":1,"firstName":"jimmiie","lastName":"van eijsden","idToken":"12983682682"}'
-    var response = httpGet();
-    document.getElementById("loadhere").innerHTML=response;
-
-}
-
-function httpGet()
-{
-  var xmlHttp = null;
-
-  xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange=function() {
-    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
-        var json = xmlHttp.responseText;
-        var obj = JSON.parse(json);
-        console.log(obj);
-        return obj;
-      }
-    else{
-      return "TOMTE";
-    }
-  } 
-  xmlHttp.open( "GET", "http://79.136.28.106:8888/users/1", false );
-  xmlHttp.send( null );
-  
-}

@@ -12,7 +12,13 @@ function initialize() {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
   map = new google.maps.Map(mapCanvas, mapOptions);
-  createMarker(myLatlng);
+
+  var locations = getLocations();
+  for (var i=0; i < locations.length; i++) {
+    pos = (locations[i].position);
+    createMarker(pos);
+  }
+
   
 
   google.maps.event.addListener(map, 'click', function(event) {
