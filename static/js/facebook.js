@@ -12,7 +12,7 @@
       // Logged into your app and Facebook.
     //  div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'inline';
-      replace_login(true);
+      //replace_login(true);
       if(document.location.href == "http://trolle.asuscomm.com:9999/") {
 		document.location.href = "http://trolle.asuscomm.com:9999/test/";
 	}
@@ -22,12 +22,12 @@
       // The person is logged into Facebook, but not your app.
       //div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'none';
-      replace_login(false);
+      //replace_login(false);
 
     } else {
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
-      replace_login(false);
+      //replace_login(false);
       //div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'none';
 
@@ -63,7 +63,7 @@
       });
   }
 
-  function replace_login(logged_in){
+  /*function replace_login(logged_in){
     var elem = document.getElementById("fb-login-btn");
     if ((elem.innerHTML=="Login with Facebook") && logged_in){
 	elem.innerHTML = "Logout";
@@ -73,7 +73,7 @@
 	elem.onlick = function() { login(); };		
     }
   }
-
+*/
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '562407890559656',

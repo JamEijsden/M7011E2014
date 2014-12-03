@@ -13,32 +13,34 @@
         	<div class="container" id="inner">
 
 
-        		<form class="form-horizontal" role="form">
-  <div class="form-group">
-    <label class="control-label col-sm-2" for="stairs">Name:</label>
-    <div class="col-sm-10">
-      <input type="input" class="form-control" id="stairs" placeholder="The Humpty Dumpty Stairs">
-    </div>
-  </div>
+<form class="form-horizontal" role="form" name="newLocation" action="#" method="POST">
   <div class="form-group">
     <label class="control-label col-sm-2" for="loc">Location:</label>
     <div class="col-sm-10"> 
-      <input type="input" class="form-control" id="loc" placeholder="Stairs' Location">
+      <input type="input" class="form-control" id="loc" name="position" placeholder="Stairs' Location">
     </div>
   </div>
-  <div class="form-group"> 
-    <label class="control-label col-sm-2" for="loc">Picture:</label>
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="stairs">Name:</label>
+    <div class="col-sm-10">
+      <input type="input" class="form-control" name="stairname"id="stairs" placeholder="The Humpty Dumpty Stairs">
+    </div>
+  </div>
+  <input type="hidden" class="form-control "value='1' name="id" id="stairs" placeholder="userid">
+  <input type="hidden" class="form-control "value='http://media.bymk.se/2014/06/katten_jarvis.jpg' name="photo" id="stairs" placeholder="photo">
+  <!--<div class="form-group"> 
+    <label class="control-label col-sm-2" for="loc" name="photo">Picture:</label>
     <div class="col-sm-10"> 
       <input type="file" class="btn btn-default">
     </div>
-  </div>
+  </div>-->
   <div class="form-group"> 
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-primary" onclick="return sendForm(this.form);">Submit</button>
     </div>
   </div>
 </form>
-
+<dsiv id="loadhere">hej hej</div>
         	</div>
         
 {{end}}

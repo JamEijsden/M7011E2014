@@ -30,25 +30,28 @@ google.maps.event.addListener(infowindow,'closeclick',function(){
 }
 function getJson(){
 //'{"userID":1,"firstName":"jimmiie","lastName":"van eijsden","idToken":"12983682682"}'
-var json = httpGet();
-    obj = JSON.parse(json);
-    console.log(obj);
-document.getElementById("loadhere").innerHTML = obj;
-//alert(obj);
+    var response = httpGet();
+    document.getElementById("loadhere").innerHTML=response;
 
 }
 
 function httpGet()
 {
-    var xmlHttp = null;
+  var xmlHttp = null;
 
-    xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", "http://79.136.28.106:8888/users/1", false );
-    xmlHttp.send( null );
-    xmlhttp.onreadystatechange=function() {
-     if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-      return xmlHttp.responseText;
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange=function() {
+    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+        var json = xmlHttp.responseText;
+        var obj = JSON.parse(json);
+        console.log(obj);
+        return obj;
       }
-}
-    return "TOMTE";
+    
+  return "TOMTE";
+  } 
+  xmlHttp.open( "GET", "http://79.136.28.106:8888/users/1", false );
+  xmlHttp.send( null );
+  
+  return "POOP";
 }
