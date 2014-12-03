@@ -47,11 +47,11 @@ function httpGet()
         console.log(obj);
         return obj;
       }
-    
-  return "TOMTE";
+    else{
+      return "TOMTE";
+    }
   } 
   xmlHttp.open( "GET", "http://79.136.28.106:8888/users/1", false );
   xmlHttp.send( null );
   
-  return "POOP";
 }
