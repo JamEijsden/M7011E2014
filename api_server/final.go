@@ -44,11 +44,11 @@ type Stair struct {
 
 //Comment struct
 type Comment struct {
-	CommentId   uint64
-	CommentText string
-	CommentDate time.Time
-	IdStair     uint64
-	IdToken     string
+	CommentId   uint64    `json:"commentId"`
+	CommentText string    `json:"commentText"`
+	CommentDate time.Time `json:"commentDate"`
+	IdStair     uint64    `json:"idStair"`
+	IdToken     string    `json:"idToken"`
 }
 
 // GLOBAL VARIABLE FOR CONNECTING TO DB
