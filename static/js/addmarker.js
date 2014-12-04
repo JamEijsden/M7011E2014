@@ -40,6 +40,15 @@ function closeSelf(){
 function sendForm(form) {
 
   // collect the form data while iterating over the inputs
+   window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '562407890559656',
+    cookie     : true,  // enable cookies to allow the server to access 
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v2.1' // use version 2.1
+  });
+};
   var data = {};
   for (var i = 0, ii = form.length; i < ii; ++i) {
     var input = form[i];
@@ -47,7 +56,12 @@ function sendForm(form) {
       data[input.name] = input.value;
     }
   }
+  FB.api('/me', function(response) {
+     console.log('Get: ' + response.id);
+      
+  });
   document.getElementById('loadhere').innerHTML = JSON.stringify(data);
+ 
   // construct an HTTP request/
   /*
   var xhr = new XMLHttpRequest();
@@ -69,7 +83,5 @@ function sendForm(form) {
 
   xhr.send(JSON.stringify(data));
   //closeSelf();
-  
-  return false; // Prevent page from submitting.
   
 }

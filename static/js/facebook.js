@@ -120,6 +120,9 @@
       console.log('Successful login for: ' + response.name);
       sendForm(response);
      //   document.getElementById('photo').src="https://graph.facebook.com/"+response.id+"/picture"; 
+     if(document.location.href != "http://trollegeuna.se:9999/"){
+        loadProfile(response);
+     }
     });
 }
 
