@@ -26,9 +26,10 @@ type handlerError struct {
 
 type User struct {
 	UserID    uint64 `json:"userID"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	IdToken   string `json:"idToken"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	IdToken   string `json:"id"`
+	Photo     string `json:"photo"`
 }
 
 type Stair struct {
@@ -162,17 +163,18 @@ func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	for row.Next() {
 		var idToken string
 		var uid uint64
-		var name, lastname string
+		var name, lastname, photo string
 
 		fmt.Println(row)
 
-		if err := row.Scan(&uid, &name, &lastname, &idToken); err != nil {
+		if err := row.Scan(&uid, &name, &lastname, &idToken, &photo); err != nil {
 			log.Fatal(err)
 		}
 		user.IdToken = idToken
 		user.UserID = uid
 		user.FirstName = name
 		user.LastName = lastname
+		user.Photo = photo
 	}
 	//fmt.Println(row)
 	//	user.UserID = row[0]
@@ -192,7 +194,7 @@ func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 */
 func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
 
-	data, e := ioutil.ReadAll(req.Body)
+	data, e := ioutil.ReadAll(r.Body)
 
 	fmt.Println(string(data))
 	if e != nil {
@@ -217,8 +219,24 @@ func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 		return nil, &handlerError{err, "Internal server error", http.StatusInternalServerError}
 	}
 	defer con.Close()
+	fmt.Println("")
+	fmt.Println("")
+	fmt.Println("Detta är token:")
+	fmt.Println(payload.IdToken)
+	fmt.Println("")
+	fmt.Println("")
+	row, _ := con.Query("select count(*) from users where idToken=?", payload.IdToken)
+	var count int
+	for row.Next() {
+		row.Scan(&count)
+	}
 
-	_, err = con.Exec("insert into users( name, lastname, idToken) values(?,?,?)", payload.FirstName, payload.LastName, payload.IdToken)
+	if count == 1 {
+		return nil, &handlerError{nil, "User already exists", http.StatusFound}
+
+	}
+
+	_, err = con.Exec("insert into users( name, lastname, idToken, photo) values(?,?,?,?)", payload.FirstName, payload.LastName, payload.IdToken, payload.Photo)
 
 	if err != nil {
 		fmt.Println("Kunde inte lägga till :/")

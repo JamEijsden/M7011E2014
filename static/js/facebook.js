@@ -112,11 +112,24 @@
 
   // Here we run a very simple test of the Graph API after login is
   // successful.  See statusChangeCallback() for when this call is made.
+  
   function testAPI() {
    // document.location = "localhost:9999/about/";
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
+      sendForm(response);
      //   document.getElementById('photo').src="https://graph.facebook.com/"+response.id+"/picture"; 
     });
+}
+
+  function sendForm(fbjson) {
+    fbjson.photo = "graph.facebook.com/"+fbjson.id+"/picture?type=large";
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST','http://79.136.28.106:8888/users' , true);
+  xhr.onload = function(e) {};
+
+ xhr.send(JSON.stringify(fbjson));
+  //closeSelf();
+  
   }
