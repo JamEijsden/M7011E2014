@@ -35,11 +35,12 @@ type User struct {
 
 //Stair struct
 type Stair struct {
-	Id       uint64 `json:"id"`
-	Position string `json:"position"`
-	Name     string `json:"stairname"`
-	User     uint64 `json:"user"`
-	Photo    string `json:"photo"`
+	Id          uint64 `json:"id"`
+	Position    string `json:"position"`
+	Name        string `json:"stairname"`
+	User        uint64 `json:"user"`
+	Photo       string `json:"photo"`
+	Description string `json:"description"`
 }
 
 //Comment struct
@@ -310,7 +311,7 @@ func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerE
 	//typ om dobbe eller dobbelina
 	// eller kanske linkeboda??
 	//		OOOOOOOOO
-	_, err = con.Exec("insert into Stairs(position,stairname,uid,photo) values(?,?,?,?)", payload.Position, payload.Name, payload.User, payload.Photo)
+	_, err = con.Exec("insert into Stairs(position, stairname, description, uid, photo) values(?,?,?,?,?)", payload.Position, payload.Name, payload.Description, payload.User, payload.Photo)
 
 	if err != nil {
 		fmt.Println("Kunde inte lägga till :/")
@@ -347,12 +348,12 @@ func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerE
 
 	stair := new(Stair)
 	for row.Next() {
-		var position, stairname, photo string
+		var position, stairname, photo, description string
 		var uid, id uint64
 
 		fmt.Println(row)
 
-		if err := row.Scan(&id, &position, &stairname, &uid, &photo); err != nil {
+		if err := row.Scan(&id, &position, &stairname, &description, &uid, &photo); err != nil {
 			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
 			//log.Fatal(err)
 		}
@@ -361,6 +362,7 @@ func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerE
 		stair.Name = stairname
 		stair.Photo = photo
 		stair.User = uid
+		stair.Description = description
 		stair.Position = position
 
 	}
@@ -381,7 +383,7 @@ func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *hand
 	}
 	defer con.Close()
 
-	rows, err := con.Query("select id, position, stairname from Stairs")
+	rows, err := con.Query("select id, position, stairname, description from Stairs")
 	if err != nil {
 		return nil, &handlerError{err, "Error in DB", http.StatusInternalServerError}
 		//log.Printf("No user with that ID")
@@ -389,17 +391,18 @@ func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *hand
 
 	var result []Stair // create an array of stairs
 	var id uint64
-	var position, stairname string
+	var position, stairname, description string
 
 	for rows.Next() {
 		stair := new(Stair)
-		err = rows.Scan(&id, &position, &stairname)
+		err = rows.Scan(&id, &position, &stairname, &description)
 		if err != nil {
 			return result, &handlerError{err, "Error in DB", http.StatusInternalServerError}
 		}
 		stair.Id = id
 		stair.Position = position
 		stair.Name = stairname
+		stair.Description = description
 		result = append(result, *stair)
 	}
 
@@ -420,7 +423,7 @@ func getComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handl
 
 	row, err := con.Query("select * from Comments where id =?", param)
 	if err == sql.ErrNoRows {
-		return nil, &handlerError{err, "Error comment on Stair", http.StatusBadRequest}
+		return nil, &handlerError{err, "Error commenting on Stair", http.StatusBadRequest}
 
 	}
 
