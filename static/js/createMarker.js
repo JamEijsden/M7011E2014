@@ -6,6 +6,7 @@ function createMarker(location) {
       map: map,
       title: ""+location
   });   
+  console.log("Created: " + marker.position);
  
   contentString = "<h4>"+marker.title+"</h4>"+
   "<img src='http://media.bymk.se/2014/06/katten_jarvis.jpg' alt='Smileyface' height='300' width='400'><input type='button' class='btn btn-primary' onclick='getJson();' value=Add Location'>";

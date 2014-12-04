@@ -6,6 +6,7 @@
 <link rel="shortcut icon" type="image/png" href="/static/image/smiley.jpg"/>
 <link href="/static/css/bootstrap.css" type="text/css" rel="stylesheet">
 <!--<script src="https://maps.googleapis.com/maps/api/js"></script>-->
+<script src="http://connect.facebook.net/en_US/all.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
  <script src="/static/js/facebook.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
@@ -15,7 +16,13 @@
     }
 </style>
 {{template "head" . }}
+<script src="/static/js/loadPhoto.js"></script>
+<script src="/static/js/loadPage.js"></script>
 
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB28dYnChM2OgEMpgLL8rOXsR7_cuGJ4NU"> </script>
+<script src="/static/js/map.js"></script>
+<script src="/static/js/createMarker.js"></script>
+<script src="/static/js/getLocations.js"></script>
 </head>
 <body>
 <div class="container" style="text-align:center;">
@@ -40,19 +47,19 @@
 </div>
 
 <div class="container" style="width:20%; float: left; text-align: center;" >
-	<div class="row">
-		<img src="/static/image/dibs.png"  style="width:150px; height:100px;">
+	<div class="row" >
+		<img src="/static/image/dibs.png" style="width:150px; height:100px;">
 	</div>
 
 	<div class="row" >
-		<img src="" style="width:100px; height:100px;" id="photo" alt="Smiley">
+		<img src="" style="width:100px; height:125px;" id="fbphoto" >
 
 	</div>
 	<div class="row">
       <ul class="nav nav-pills nav-stacked" role="tablist">
-        <li><a href="/home/" >Home</a></li>
-		<li><a href="/user/">About</a></li>
-		<li><a href="/map/">Test</a></li>       
+        <li><a id="fbname" href="javascript:void(0);" onclick="loadPage('user');" ></a></li>
+		<li><a href="/home/">About</a></li>
+		<li><a href="javascript:void(0);" onclick="initialize();">Map</a></li>       
 		<li><div class="fb-login-button" id="fb-button" data-max-rows="3" data-size="medium" data-show-faces="false" data-auto-logout-link="true"></div></li>
 
       </ul>
@@ -61,7 +68,7 @@
 
 
 <div class="container" id="allContent">
-	<div class="jumbotron">
+	<div class="jumbotron" id="jumbo_content">
 		<h2> {{template "title" . }} </h2>
 		{{ template "content" . }}		
 	</div>

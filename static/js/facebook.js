@@ -14,7 +14,7 @@
      // div_FBLike.style.display = 'inline';
       //replace_login(true);
       if(document.location.href == "http://trollegeuna.se:9999/") {
-		document.location.href = "http://trollegeuna.se:9999/test/";
+		document.location.href = "http://trollegeuna.se:9999/dibs/";
 	}
       testAPI();
 
