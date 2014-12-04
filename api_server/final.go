@@ -11,6 +11,7 @@ import (
 	//"math"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -32,12 +33,22 @@ type User struct {
 	Photo     string `json:"photo"`
 }
 
+//Stair struct
 type Stair struct {
 	Id       uint64 `json:"id"`
 	Position string `json:"position"`
 	Name     string `json:"stairname"`
 	User     uint64 `json:"user"`
 	Photo    string `json:"photo"`
+}
+
+//Comment struct
+type Comment struct {
+	CommentId   uint64
+	CommentText string
+	CommentDate time.Time
+	IdStair     uint64
+	IdToken     string
 }
 
 // GLOBAL VARIABLE FOR CONNECTING TO DB
@@ -150,7 +161,7 @@ func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	}
 	defer con.Close()
 
-	row, err := con.Query("select * from users where uid =?", param)
+	row, err := con.Query("select * from users where idToken =?", param)
 	if err == sql.ErrNoRows {
 		log.Printf("No user with that ID")
 	}
@@ -299,7 +310,7 @@ func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerE
 	//typ om dobbe eller dobbelina
 	// eller kanske linkeboda??
 	//		OOOOOOOOO
-	_, err = con.Exec("insert into Stairs(position,stairname,uid,photo) values(?,?,1,?)", payload.Position, payload.Name, payload.Photo)
+	_, err = con.Exec("insert into Stairs(position,stairname,uid,photo) values(?,?,?,?)", payload.Position, payload.Name, payload.User, payload.Photo)
 
 	if err != nil {
 		fmt.Println("Kunde inte lägga till :/")
@@ -395,6 +406,95 @@ func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *hand
 	return result, nil
 }
 
+/*
+	Get comment for a specific stairid
+*/
+func getComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	param := mux.Vars(req)["id"]
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		log.Fatal(err)
+	}
+	defer con.Close()
+
+	row, err := con.Query("select * from Comments where id =?", param)
+	if err == sql.ErrNoRows {
+		return nil, &handlerError{err, "Error comment on Stair", http.StatusBadRequest}
+
+	}
+
+	if err != nil {
+		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
+	}
+	var result []Comment
+	var commentText, idToken string
+	var commentDate time.Time
+	var commentId, idStair uint64
+
+	for row.Next() {
+		comment := new(Comment)
+
+		fmt.Println(row)
+
+		if err := row.Scan(&commentId, &commentText, &commentDate, &idStair, &idToken); err != nil {
+			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
+		}
+
+		comment.CommentId = commentId
+		comment.CommentText = commentText
+		comment.CommentDate = commentDate
+		comment.IdStair = idStair
+		comment.IdToken = idToken
+
+	}
+
+	return result, nil
+
+}
+
+/*
+	Add commment to db
+
+*/
+func addComment(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	data, e := ioutil.ReadAll(req.Body)
+
+	fmt.Println(string(data))
+	if e != nil {
+		fmt.Println("AJAJAJ 1111")
+		fmt.Println(string(data))
+		return nil, &handlerError{e, "Can't read request", http.StatusBadRequest}
+	}
+	var payload Comment
+	e = json.Unmarshal(data, &payload)
+	payload.CommentDate = time.Now()
+
+	if e != nil {
+		fmt.Println("SATAN")
+		fmt.Println(e)
+		fmt.Println("kunde inte unmarshla detta:")
+		fmt.Println(payload)
+		return Comment{}, &handlerError{e, "Could'nt parse JSON", http.StatusInternalServerError}
+	}
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		fmt.Println("Kunde inte öppna DB")
+		return nil, &handlerError{err, "Internal server error", http.StatusInternalServerError}
+	}
+	defer con.Close()
+
+	_, err = con.Exec("insert into Comments(commentText,commentDate,idStair,idToken) values(?,?,?,?)", payload.CommentText, payload.CommentDate, payload.IdStair, payload.IdToken)
+
+	if err != nil {
+		fmt.Println("Kunde inte lägga till :/")
+		return nil, &handlerError{err, "Error adding to DB", http.StatusInternalServerError}
+	}
+
+	return payload, nil
+
+}
+
 func main() {
 	// command line flags
 	port := flag.Int("port", 8888, "port to serve on")
@@ -411,14 +511,22 @@ func main() {
 	// setup routes
 	router := mux.NewRouter()
 	router.Handle("/", http.RedirectHandler("/static/", 302))
+
+	// Handlers for Users
 	router.Handle("/users", handler(listAllUsers)).Methods("GET")
 	// hämta ut infon för att lägga till ny
 	router.Handle("/users", handler(addUser)).Methods("POST")
 	router.Handle("/users/{id}", handler(getUser)).Methods("GET")
 	router.Handle("/users/{id}", handler(removeUser)).Methods("DELETE")
+
+	// Handlers for stairs
 	router.Handle("/stair", handler(addStair)).Methods("POST")
 	router.Handle("/stair/{id}", handler(getStair)).Methods("GET")
 	router.Handle("/stairs", handler(getAllStairs)).Methods("GET")
+
+	// handlers for comments
+	router.Handle("/comment", handler(addComment)).Methods("POST")
+	router.Handle("/comment/{id}", handler(getComments)).Methods("GET")
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileHandler))
 	http.Handle("/", router)
