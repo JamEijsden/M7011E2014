@@ -208,7 +208,7 @@ func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 
 	data, e := ioutil.ReadAll(r.Body)
 
-	fmt.Println(string(data))
+	fmt.Println("BEFORE UNMARSHAL" + string(data))
 	if e != nil {
 		fmt.Println("AJAJAJ 1111")
 		fmt.Println(string(data))
@@ -218,6 +218,7 @@ func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	// create new user called payload
 	var payload User
 	e = json.Unmarshal(data, &payload)
+
 	if e != nil {
 		fmt.Println("SATAN")
 		fmt.Println(e)
@@ -285,7 +286,7 @@ func removeUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerEr
 func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
 	data, e := ioutil.ReadAll(req.Body)
 
-	fmt.Println(string(data))
+	fmt.Println("BEFORE MARSHAL " + string(data))
 	if e != nil {
 		fmt.Println("AJAJAJ 1111")
 		fmt.Println(string(data))
@@ -293,6 +294,8 @@ func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerE
 	}
 	var payload Stair
 	e = json.Unmarshal(data, &payload)
+	fmt.Print("AFTER UNMARSHAL ")
+	fmt.Println(payload)
 	if e != nil {
 		fmt.Println("SATAN")
 		fmt.Println(e)
@@ -383,7 +386,7 @@ func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *hand
 	}
 	defer con.Close()
 
-	rows, err := con.Query("select id, position, stairname, description from Stairs")
+	rows, err := con.Query("select id, position, stairname, description, photo from Stairs")
 	if err != nil {
 		return nil, &handlerError{err, "Error in DB", http.StatusInternalServerError}
 		//log.Printf("No user with that ID")
@@ -391,17 +394,18 @@ func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *hand
 
 	var result []Stair // create an array of stairs
 	var id uint64
-	var position, stairname, description string
+	var position, stairname, description, photo string
 
 	for rows.Next() {
 		stair := new(Stair)
-		err = rows.Scan(&id, &position, &stairname, &description)
+		err = rows.Scan(&id, &position, &stairname, &description, &photo)
 		if err != nil {
 			return result, &handlerError{err, "Error in DB", http.StatusInternalServerError}
 		}
 		stair.Id = id
 		stair.Position = position
 		stair.Name = stairname
+		stair.Photo = photo
 		stair.Description = description
 		result = append(result, *stair)
 	}

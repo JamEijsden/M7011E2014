@@ -46,11 +46,13 @@ function loadMap(locations){
     document.getElementById("loadhere").innerHTML='<p>'+locations[0].stairname+'</p>';
   
     for (var i=0; i < locations.length; i++) {
+      console.log(locations[i]);
       pos = locations[i].position.replace('(','').replace(')','');
       var bits = pos.split(/,\s*/);
       console.log(bits[0]+", "+bits[1]);
       latLng = CreateLatLngObject(bits[0], bits[1]);
-      createMarker(latLng);
+      locations[i].position = latLng;
+      createMarker(locations[i]);
     }
     
     
