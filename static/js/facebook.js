@@ -14,7 +14,7 @@
      // div_FBLike.style.display = 'inline';
       //replace_login(true);
       if(document.location.href == "http://trollegeuna.se:9999/") {
-		document.location.href = "http://trollegeuna.se:9999/dibs/";
+		document.location.href = "http://trollegeuna.se:9999/map/";
 	}
       testAPI();
 
@@ -54,7 +54,7 @@
               // connected
 
 	    checkLoginState();
-	      window.location.href = "http://trollegeuna.se:9999/test/";
+	      //window.location.href = "http://trollegeuna.se:9999/map/";
           } else {
               // cancelled
               replace_login(false);

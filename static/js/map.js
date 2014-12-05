@@ -1,12 +1,8 @@
 var map
 
-
- 
-
 function initialize() {
  // loadPage('map');
   getLocations();  
-
 }
 
 function getLocations()
@@ -29,7 +25,6 @@ function getLocations()
   };
   xmlHttp.open( "GET", "http://79.136.28.106:8888/stairs", false );
   xmlHttp.send( null );
-  
 }
 
 
@@ -40,7 +35,7 @@ function CreateLatLngObject(Latitude, Longitude) {
 }
     
 function loadMap(locations){
-  var mapCanvas = document.getElementById('map_canvas');
+  var mapCanvas = document.getElementById('main_map_canvas');
     var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
     var mapOptions = {
       zoom: 4,
