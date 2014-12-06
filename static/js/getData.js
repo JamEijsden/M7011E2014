@@ -32,7 +32,7 @@ function getUser(id, data)
         data = JSON.parse(data);
         //var obj = {name:'tomte',color:'red'};
         data.user = obj.userID;
-        console.log(obj);
+        console.log("GET ID "+obj);
         sendForm(data);
       }
     else{

@@ -43,7 +43,6 @@ function loadMap(locations){
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
     map = new google.maps.Map(mapCanvas, mapOptions);
-    document.getElementById("loadhere").innerHTML='<p>'+locations[0].stairname+'</p>';
   
     for (var i=0; i < locations.length; i++) {
       console.log(locations[i]);

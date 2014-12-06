@@ -127,12 +127,19 @@
 }
 
   function sendForm(fbjson) {
-    fbjson.photo = "graph.facebook.com/"+fbjson.id+"/picture?type=large";
+  var data = {};
+  console.log("fbjson: "+fbjson);
+  data.id=fbjson.id;
+  data.first_name = fbjson.first_name;
+  data.last_name = fbjson.last_name;
+  data.photo = "graph.facebook.com/"+fbjson.id+"/picture?type=large";
+  console.log("data: "+data);
+  //fbjson.photo = "graph.facebook.com/"+fbjson.id+"/picture?type=large";
   var xhr = new XMLHttpRequest();
   xhr.open('POST','http://79.136.28.106:8888/users' , true);
   xhr.onload = function(e) {};
 
- xhr.send(JSON.stringify(fbjson));
+ xhr.send(JSON.stringify(data));
   //closeSelf();
   
   }
