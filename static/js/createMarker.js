@@ -2,6 +2,7 @@ var currentMark
 var loc;
 function createMarker(location) {
   var marker = new google.maps.Marker({
+      id: location.id,
       position: location.position,
       map: map,
       title: location.stairname,
@@ -20,6 +21,13 @@ function createMarker(location) {
           document.getElementById('myModalLabel').innerHTML = this.getTitle();
           document.getElementById('stairPhoto').src = this.photo;
           document.getElementById('stairDesc').innerHTML = this.description;
+          document.getElementById('idstair').value = this.id;
+          FB.api('/me', function(response) {
+            console.log('user commenting:  ' + response.id);
+            document.getElementById('idtoken').value = response.id;
+
+          });
+          
           $('#modal2').modal('show');
 
           /*currentMark = marker;

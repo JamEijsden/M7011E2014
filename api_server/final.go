@@ -470,7 +470,7 @@ func getComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handl
 	}
 	defer con.Close()
 
-	row, err := con.Query("select * from Comments where id =?", param)
+	row, err := con.Query("select * from Comments where idStair =?", param)
 	if err == sql.ErrNoRows {
 		return nil, &handlerError{err, "Error commenting on Stair", http.StatusBadRequest}
 

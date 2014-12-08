@@ -159,7 +159,7 @@
 					    </div>
 					  </div>
 					  <div class="modal-footer">
-            				<button type="submit" class="btn btn-primary" onclick="submitForm(this.form);" data-dismiss="modal">Add</button>
+            				<button type="submit" class="btn btn-primary" onclick="submitForm(this.form, 'marker');" data-dismiss="modal">Add</button>
                				 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           				</div>
 					  </form> 
@@ -179,8 +179,8 @@
             <h4 class="modal-title" id="myModalLabel"></h4>
             <ul class="nav nav-tabs" id="tabContent">
         		<li class="active"><a href="#details" data-toggle="tab">Details</a></li>
-        		<li><a href="#access-security" data-toggle="tab">Comments</a></li>
-        		<li><a href="#networking" data-toggle="tab">Photos</a></li>
+        		<li><a href="#comments" data-toggle="tab">Comments</a></li>
+        		<li><a href="#photos" data-toggle="tab">Photos</a></li>
 		</ul>
           </div>
           <div class="modal-body">
@@ -201,7 +201,22 @@
 	      		</div>
 
 	        	<div class="tab-pane" id="comments">
-	        		Add comments here!
+	        		<div class='row' id='commentDiv'>
+	        			
+	        		</div>
+	        		<div class='row' id="commentFormDiv">
+	        		<form class="form-horizontal" role="form" name="commentForm" action="javascript:void(0);" method="POST">
+	        		  <div class="form-group">
+					    <label class="control-label col-sm-2" for="comment">Comment:</label>
+					    <div class="col-sm-10">
+					      <textarea class="form-control" name="commentText" row="3" id="desc" placeholder="Leave a comment"></textarea>
+					    </div>
+					  </div>
+					  <input type="hidden" class="form-control "value='' name="idStair" id="idstair">
+					  <input type="hidden" class="form-control "value='' name="idToken" id="idtoken">
+					  <button type="submit" class="btn btn-primary" onclick="submitForm(this.form, 'comment');">Submit</button>
+	        		</form>
+	        		</div>
 	        	</div> 
 
 
@@ -209,8 +224,6 @@
 	        		Add photos here!
 	       		</div> 
 			</div>
-
-          <input type="hidden" class="form-control" id="stairID" value="">
           		
           </div>
 

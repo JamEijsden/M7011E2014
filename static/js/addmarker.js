@@ -37,7 +37,7 @@ function closeSelf(){
        window.close();
 }
 
-function submitForm(form){
+function submitForm(form, type){
     // collect the form data while iterating over the inputs
   var data = {};
   for (var i = 0, ii = form.length; i < ii; ++i) {
@@ -62,29 +62,22 @@ function submitForm(form){
       getUser(response.id, data);
 
   });
+   sendForm(data, type);
 }
 
-function sendForm(data) {
-  
-  //document.getElementById('loadhere').innerHTML = data;
- 
-  // construct an HTTP request/
-  /*
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'http://79.136.28.106:8888/stair', true);
-  xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+function sendForm(data, type) {
 
-  // send the collected data as JSON
-  xhr.send(JSON.stringify(data));
-
-  xhr.onloadend = function () {};
-  */
   var xhr = new XMLHttpRequest();
-  xhr.open('POST','http://79.136.28.106:8888/stair' , true);
+  if(type == 'marker'){
+    xhr.open('POST','http://79.136.28.106:8888/stair' , true);
+  }else if(type == 'comment'){
+    data.idStair = parseInt(data.idStair);
+    xhr.open('POST','http://79.136.28.106:8888/comment' , true);
+  }
   xhr.onload = function(e) {};
-  console.log(data);
-  xhr.send(JSON.stringify(data));
-  //closeSelf();
+  if(type!=undefined){
+    xhr.send(JSON.stringify(data));
+  }
   initialize();
   
 }
