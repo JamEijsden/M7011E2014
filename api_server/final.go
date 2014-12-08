@@ -547,6 +547,40 @@ func addComment(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 
 }
 
+/*
+	Get picture from db
+
+*/
+func getStairPictures(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	return nil, nil
+}
+
+/*
+	Add picture to db
+
+*/
+func addPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	data, e := ioutil.ReadAll(req.Body)
+
+	fmt.Println("BEFORE UNMARSHAL" + string(data))
+	if e != nil {
+		fmt.Println("AJAJAJ 1111")
+		fmt.Println(string(data))
+		return nil, &handlerError{e, "Can't read request", http.StatusBadRequest}
+	}
+
+	// create new user called payload
+	var payload User
+	e = json.Unmarshal(data, &payload)
+	fmt.Println("")
+	fmt.Println("")
+	fmt.Println("")
+	fmt.Println("Detta är det Unmarshlade meddelandet:")
+	fmt.Println("")
+	fmt.Println(e)
+	return nil, nil
+}
+
 func main() {
 	// command line flags
 	port := flag.Int("port", 8888, "port to serve on")
@@ -575,12 +609,16 @@ func main() {
 	router.Handle("/stair", handler(addStair)).Methods("POST")
 	router.Handle("/stair/{id}", handler(getStair)).Methods("GET")
 	router.Handle("/stairs", handler(getAllStairs)).Methods("GET")
+	// Get all stairs a user have added..
 	router.Handle("/stairs/{id}", handler(getUserStairs)).Methods("GET")
 
 	// handlers for comments
 	router.Handle("/comment", handler(addComment)).Methods("POST")
 	router.Handle("/comment/{id}", handler(getComments)).Methods("GET")
 
+	// Handlers for pictures
+	router.Handle("/picture", handler(addPicture)).Methods("POST")
+	router.Handle("/picture/{id}", handler(getStairPictures)).Methods("GET")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileHandler))
 	http.Handle("/", router)
 
