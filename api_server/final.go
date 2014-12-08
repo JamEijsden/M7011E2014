@@ -329,6 +329,51 @@ func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerE
 	Get stair from DB
 	!READY FOR TESTING!
 */
+
+func getUserStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	param := mux.Vars(req)["id"]
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		log.Fatal(err)
+	}
+	defer con.Close()
+
+	row, err := con.Query("select * from Stairs where uid =?", param)
+	if err == sql.ErrNoRows {
+		return nil, &handlerError{err, "Error no stairs found", http.StatusBadRequest}
+		//log.Printf("No user with that ID")
+	}
+
+	if err != nil {
+		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
+		//panic(err)
+	}
+
+	stair := new(Stair)
+	for row.Next() {
+		var position, stairname, photo, description string
+		var uid, id uint64
+
+		fmt.Println(row)
+
+		if err := row.Scan(&id, &position, &stairname, &description, &uid, &photo); err != nil {
+			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
+			//log.Fatal(err)
+		}
+
+		stair.Id = id
+		stair.Name = stairname
+		stair.Photo = photo
+		stair.User = uid
+		stair.Description = description
+		stair.Position = position
+
+	}
+
+	return stair, nil
+
+}
 func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
 	param := mux.Vars(req)["id"]
 	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
@@ -530,6 +575,7 @@ func main() {
 	router.Handle("/stair", handler(addStair)).Methods("POST")
 	router.Handle("/stair/{id}", handler(getStair)).Methods("GET")
 	router.Handle("/stairs", handler(getAllStairs)).Methods("GET")
+	router.Handle("/stairs/{id}", handler(getUserStairs)).Methods("GET")
 
 	// handlers for comments
 	router.Handle("/comment", handler(addComment)).Methods("POST")
