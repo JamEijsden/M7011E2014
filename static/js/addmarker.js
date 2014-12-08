@@ -62,7 +62,7 @@ function submitForm(form, type){
       getUser(response.id, data);
 
   });
-   sendForm(data, type);
+   sendForm(data, type, 'form');
 }
 
 function sendForm(data, type) {

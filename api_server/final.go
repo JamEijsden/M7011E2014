@@ -498,6 +498,7 @@ func getComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handl
 		comment.CommentDate = commentDate
 		comment.IdStair = idStair
 		comment.IdToken = idToken
+		result = append(result, *comment)
 
 	}
 

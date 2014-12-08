@@ -6,38 +6,7 @@ function initialize() {
   getLocations(data ,0, 0);  
 }
 
-function getLocations(recData, status, stairID)
-{
-  var xmlHttp = null;
 
-  xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange=function() {
-    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
-        var json = xmlHttp.responseText;
-        var obj = JSON.parse(json);
-        //var obj = {name:'tomte',color:'red'};
-        console.log(obj);
-        if(status == 0){
-          loadMap(obj);  
-        } else if(status == 1){
-          //pass along locations from LoadMap and comments for location
-          createMarker(recData,obj)
-        }
-        //document.getElementById("loadhere").innerHTML='<p>'+obj[1].position+'</p>';
-      }
-    else{
-      return "TOMTE";
-    }
-  };
-  if(status == 0){
-      xmlHttp.open( "GET", "http://79.136.28.106:8888/stairs", false );   
-  }else if(status == 1){
-      xmlHttp.open( "GET", "http://79.136.28.106:8888/comment/"+stairID, false );
-  }else{
-    
-  }
-  xmlHttp.send( null );
-}
 
 
 //google.maps.event.addDomListener(window, 'load', initialize);
