@@ -4,39 +4,48 @@ import (
 	"database/sql"
 	//	"encoding/base64"
 	"encoding/json"
-	"flag"
+	//	"flag"
 	"fmt"
 	_ "github.com/ziutek/mymysql/godrv"
 	"io/ioutil"
 	"log"
 	//"math"
 	"net/http"
-	"strconv"
+	//	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
 )
 
+//Comment struct
+type Comment struct {
+	CommentId   uint64    `json:"commentId"`
+	CommentText string    `json:"commentText"`
+	CommentDate time.Time `json:"commentDate"`
+	IdStair     uint64    `json:"idStair"`
+	IdToken     string    `json:"idToken"`
+}
+
 /*
 	Get comment for a specific stairid
 */
-func GetComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+func GetComments(rw http.ResponseWriter, req *http.Request) (interface{}, *HandlerError) {
 	param := mux.Vars(req)["id"]
 	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
 	if err != nil {
-		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		return nil, &HandlerError{err, "Local error opening DB", http.StatusInternalServerError}
 		log.Fatal(err)
 	}
 	defer con.Close()
 
 	row, err := con.Query("select * from Comments where idStair =?", param)
 	if err == sql.ErrNoRows {
-		return nil, &handlerError{err, "Error commenting on Stair", http.StatusBadRequest}
+		return nil, &HandlerError{err, "Error commenting on Stair", http.StatusBadRequest}
 
 	}
 
 	if err != nil {
-		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
+		return nil, &HandlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
 	}
 
 	var result []Comment
@@ -51,7 +60,7 @@ func GetComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handl
 		fmt.Println(row)
 
 		if err := row.Scan(&commentId, &commentText, &commentDate, &idStair, &idToken); err != nil {
-			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
+			return nil, &HandlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
 		}
 
 		comment.CommentId = commentId
@@ -71,14 +80,14 @@ func GetComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handl
 	Add commment to db
 
 */
-func AddComment(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+func AddComment(rw http.ResponseWriter, req *http.Request) (interface{}, *HandlerError) {
 	data, e := ioutil.ReadAll(req.Body)
 
 	fmt.Println(string(data))
 	if e != nil {
 		fmt.Println("AJAJAJ 1111")
 		fmt.Println(string(data))
-		return nil, &handlerError{e, "Can't read request", http.StatusBadRequest}
+		return nil, &HandlerError{e, "Can't read request", http.StatusBadRequest}
 	}
 	var payload Comment
 	e = json.Unmarshal(data, &payload)
@@ -89,12 +98,12 @@ func AddComment(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 		fmt.Println(e)
 		fmt.Println("kunde inte unmarshla detta:")
 		fmt.Println(payload)
-		return Comment{}, &handlerError{e, "Could'nt parse JSON", http.StatusInternalServerError}
+		return Comment{}, &HandlerError{e, "Could'nt parse JSON", http.StatusInternalServerError}
 	}
 	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
 	if err != nil {
 		fmt.Println("Kunde inte öppna DB")
-		return nil, &handlerError{err, "Internal server error", http.StatusInternalServerError}
+		return nil, &HandlerError{err, "Internal server error", http.StatusInternalServerError}
 	}
 	defer con.Close()
 
@@ -102,7 +111,7 @@ func AddComment(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 
 	if err != nil {
 		fmt.Println("Kunde inte lägga till :/")
-		return nil, &handlerError{err, "Error adding to DB", http.StatusInternalServerError}
+		return nil, &HandlerError{err, "Error adding to DB", http.StatusInternalServerError}
 	}
 
 	return payload, nil

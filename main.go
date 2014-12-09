@@ -3,62 +3,22 @@ package main
 import "M7011E2014/api"
 
 import (
-	"database/sql"
+	//	"database/sql"
 	"encoding/json"
 	"flag"
 	"fmt"
 	_ "github.com/ziutek/mymysql/godrv"
-	"io/ioutil"
+	//	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
-	"time"
+	//	"strconv"
+	//	"time"
 
 	"github.com/gorilla/mux"
 )
 
-// attach the standard ServeHTTP method to our handler so the http library can call it
-func (fn handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// here we could do some prep work before calling the handler if we wanted to
-
-	// call the actual handler
-	response, err := fn(w, r)
-
-	// check for errors
-	if err != nil {
-		log.Printf("ERROR: %v\n", err.Error)
-		http.Error(w, fmt.Sprintf(`{"error":"%s"}`, err.Message), err.Code)
-		return
-	}
-	if response == nil {
-		log.Printf("ERROR: response from method is nil\n")
-		http.Error(w, "Internal server error. Check the logs.", http.StatusInternalServerError)
-		return
-	}
-
-	// turn the response into JSON
-	bytes, e := json.Marshal(response)
-	if e != nil {
-		http.Error(w, "Error marshalling JSON", http.StatusInternalServerError)
-		return
-	}
-
-	// send the response and log
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Write(bytes)
-	log.Printf("%s %s %s %d", r.RemoteAddr, r.Method, r.URL, 200)
-}
-
 // a custom type that we can use for handling errors and formatting responses
-type handler func(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError)
-
-// error response struct
-type handlerError struct {
-	Error   error
-	Message string
-	Code    int
-}
+type handler func(w http.ResponseWriter, r *http.Request) (interface{}, *api.HandlerError)
 
 func main() {
 	// command line flags
@@ -93,7 +53,7 @@ func main() {
 	// Get all stairs a user have added..
 	router.Handle("/stairs/{id}", handler(api.GetUserStairs)).Methods("GET")
 	//Get alla pictures for a stair
-	router.Handle("/stair/picture/{id}", handler(api.GetriveStairPictures)).Methods("GET")
+	router.Handle("/stair/picture/{id}", handler(api.RetriveStairPictures)).Methods("GET")
 
 	// handlers for comments
 	router.Handle("/comment", handler(api.AddComment)).Methods("POST")
@@ -111,4 +71,37 @@ func main() {
 	// this call blocks -- the progam runs here forever
 	err := http.ListenAndServe(addr, nil)
 	fmt.Println(err.Error())
+}
+
+// attach the standard ServeHTTP method to our handler so the http library can call it
+func (fn handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// here we could do some prep work before calling the handler if we wanted to
+
+	// call the actual handler
+	response, err := fn(w, r)
+
+	// check for errors
+	if err != nil {
+		log.Printf("ERROR: %v\n", err.Error)
+		http.Error(w, fmt.Sprintf(`{"error":"%s"}`, err.Message), err.Code)
+		return
+	}
+	if response == nil {
+		log.Printf("ERROR: response from method is nil\n")
+		http.Error(w, "Internal server error. Check the logs.", http.StatusInternalServerError)
+		return
+	}
+
+	// turn the response into JSON
+	bytes, e := json.Marshal(response)
+	if e != nil {
+		http.Error(w, "Error marshalling JSON", http.StatusInternalServerError)
+		return
+	}
+
+	// send the response and log
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Write(bytes)
+	log.Printf("%s %s %s %d", r.RemoteAddr, r.Method, r.URL, 200)
 }

@@ -3,14 +3,14 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
-	"flag"
+	//	"flag"
 	"fmt"
 	_ "github.com/ziutek/mymysql/godrv"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
-	"time"
+	//	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -27,17 +27,17 @@ type User struct {
 	List all users in the db
 	!READY FOR TESTING!
 */
-func ListAllUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
+func ListAllUsers(w http.ResponseWriter, r *http.Request) (interface{}, *HandlerError) {
 	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
 	if err != nil {
-		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		return nil, &HandlerError{err, "Local error opening DB", http.StatusInternalServerError}
 		log.Fatal(err)
 	}
 	defer con.Close()
 
 	rows, err := con.Query("select name, uid from Users")
 	if err != nil {
-		return nil, &handlerError{err, "Error in DB", http.StatusInternalServerError}
+		return nil, &HandlerError{err, "Error in DB", http.StatusInternalServerError}
 		//log.Printf("No user with that ID")
 	}
 
@@ -49,7 +49,7 @@ func ListAllUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handler
 		user := new(User)
 		err = rows.Scan(&name, &uid)
 		if err != nil {
-			return result, &handlerError{err, "Error in DB", http.StatusInternalServerError}
+			return result, &HandlerError{err, "Error in DB", http.StatusInternalServerError}
 		}
 		user.FirstName = name
 		user.UserID = uid
@@ -64,7 +64,7 @@ func ListAllUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handler
 	!DONE FOR TESTING!
 
 */
-func GetUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
+func GetUser(w http.ResponseWriter, r *http.Request) (interface{}, *HandlerError) {
 	//mux.Vars(r)["id"] grabs variables from the path
 	param := mux.Vars(r)["id"]
 	fmt.Println(param)
@@ -116,7 +116,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	!DONE for TESTING!
 
 */
-func AddUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
+func AddUser(w http.ResponseWriter, r *http.Request) (interface{}, *HandlerError) {
 
 	data, e := ioutil.ReadAll(r.Body)
 
@@ -124,7 +124,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	if e != nil {
 		fmt.Println("AJAJAJ 1111")
 		fmt.Println(string(data))
-		return nil, &handlerError{e, "Can't read request", http.StatusBadRequest}
+		return nil, &HandlerError{e, "Can't read request", http.StatusBadRequest}
 	}
 
 	// create new user called payload
@@ -136,12 +136,12 @@ func AddUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 		fmt.Println(e)
 		fmt.Println("kunde inte unmarshla detta:")
 		fmt.Println(payload)
-		return Stair{}, &handlerError{e, "Could'nt parse JSON", http.StatusInternalServerError}
+		return Stair{}, &HandlerError{e, "Could'nt parse JSON", http.StatusInternalServerError}
 	}
 	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
 	if err != nil {
 		fmt.Println("Kunde inte öppna DB")
-		return nil, &handlerError{err, "Internal server error", http.StatusInternalServerError}
+		return nil, &HandlerError{err, "Internal server error", http.StatusInternalServerError}
 	}
 	defer con.Close()
 	fmt.Println("")
@@ -157,7 +157,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	}
 
 	if count == 1 {
-		return nil, &handlerError{nil, "User already exists", http.StatusFound}
+		return nil, &HandlerError{nil, "User already exists", http.StatusFound}
 
 	}
 
@@ -165,7 +165,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 
 	if err != nil {
 		fmt.Println("Kunde inte lägga till :/")
-		return nil, &handlerError{err, "Error adding to DB", http.StatusInternalServerError}
+		return nil, &HandlerError{err, "Error adding to DB", http.StatusInternalServerError}
 	}
 
 	return payload, nil
@@ -177,11 +177,11 @@ func AddUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 
 */
 
-func RemoveUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
+func RemoveUser(w http.ResponseWriter, r *http.Request) (interface{}, *HandlerError) {
 	param := mux.Vars(r)["id"]
 	id, e := strconv.Atoi(param)
 	if e != nil {
-		return nil, &handlerError{e, "Id should be an integer", http.StatusBadRequest}
+		return nil, &HandlerError{e, "Id should be an integer", http.StatusBadRequest}
 	}
 	fmt.Println(id)
 	// this is jsut to check to see if the book exists
