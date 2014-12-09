@@ -77,6 +77,8 @@ function getUser(id, data, action){
           sendForm(data, 'form');
         } else if(action == 'comment'){
           createComments(data, obj);
+        } else if(action == 'user'){
+          document.getElementById('hej').innerHTML = obj;
         }
         
       }
