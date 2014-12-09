@@ -1,8 +1,8 @@
 var markerPlaced = 0
+ var marker;
 
 
-
-function updateDrag(location) {
+function updateMarker(location) {
   var input = $('#loc');
   input.val(location);
 
@@ -10,22 +10,31 @@ function updateDrag(location) {
 
 function placeMarker(location) {
   var elem = document.getElementById("stairname");
+ 
   if(markerPlaced == 0){
-    var marker = new google.maps.Marker({
+        marker = new google.maps.Marker({
                 position:location,
                 map: map,
                 draggable:true,
                 animation: google.maps.Animation.DROP,
-                title: "New Marker",
+                title: ""+location,
               icon: "http://maps.google.com/mapfiles/ms/micons/blue.png"
             });
-    var input = $('#loc');
-    input.val(location);
+  } else{
+      console.log(marker.getTitle() + " " + marker.getPosition() + " " + location);
+      marker.setPosition(location);
+      updateMarker(marker.getPosition());
+    return;
   }
+
     
     markerPlaced = 1
+    google.maps.event.addListener(marker, 'drag', function(event){
+       updateMarker(marker.getPosition());
+    });
+
     google.maps.event.addListener(marker, 'dragend', function(event){
-    updateDrag(marker.getPosition())
+        updateMarker(marker.getPosition());
     });
     
     
@@ -46,7 +55,26 @@ function submitForm(form, type){
       data[input.name] = input.value;
     }
   }
+  var image = document.getElementById('image').files;
+  if(image.length){
+    var reader = new FileReader();
 
+
+        reader.onload = success;
+        function success(evt){
+          data.photo = evt.target.result;
+          prepareForm(data, type);
+          //alert(evt.target.result);
+
+        }
+     reader.readAsDataURL(image[0]);
+
+  
+   //sendForm(data,'form');
+}
+}
+
+function prepareForm(data, type){
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '562407890559656',
@@ -57,27 +85,27 @@ function submitForm(form, type){
     });
   };
    FB.api('/me', function(response) {
-     console.log('Get: ' + response.id);
       data = JSON.stringify(data);
-      getUser(response.id, data);
+      getUser(response.id, data, type);
 
   });
-   sendForm(data, type, 'form');
+
 }
 
 function sendForm(data, type) {
 
   var xhr = new XMLHttpRequest();
-  if(type == 'marker'){
+
+    data.user = parseInt(data.user);
     xhr.open('POST','http://79.136.28.106:8888/stair' , true);
-  }else if(type == 'comment'){
-    data.idStair = parseInt(data.idStair);
-    xhr.open('POST','http://79.136.28.106:8888/comment' , true);
-  }
+  
   xhr.onload = function(e) {};
   if(type!=undefined){
     xhr.send(JSON.stringify(data));
   }
+  document.getElementById('newLoc').reset();
   initialize();
+  markerPlaced = 0;
+  return false;
   
 }

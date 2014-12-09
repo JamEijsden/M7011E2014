@@ -9,7 +9,6 @@ function loadPage(page){
 	xmlhttp.onreadystatechange = function() {
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 	        if(page == 'user'){
-	        	console.log(xmlhttp.responseText);
 				document.getElementById('jumbo_content').innerHTML= xmlhttp.responseText;
 			}else if(page == 'map'){
 				document.getElementById('jumbo_content').innerHTML= xmlhttp.responseText;

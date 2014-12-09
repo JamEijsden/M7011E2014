@@ -118,7 +118,7 @@
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
-      sendForm(response);
+      sendUser(response);
      //   document.getElementById('photo').src="https://graph.facebook.com/"+response.id+"/picture"; 
      if(document.location.href != "http://trollegeuna.se:9999/"){
         loadProfile(response);
@@ -126,7 +126,7 @@
     });
 }
 
-  function sendForm(fbjson) {
+  function sendUser(fbjson) {
   var data = {};
   console.log("fbjson: "+fbjson);
   data.id=fbjson.id;
@@ -136,8 +136,16 @@
   console.log("data: "+data);
   //fbjson.photo = "graph.facebook.com/"+fbjson.id+"/picture?type=large";
   var xhr = new XMLHttpRequest();
+   xhr.onreadystatechange=function() {
+    if (xhr.readyState==4 && xhr.status==200) {
+      console.log('User added to DB');
+    }else if(xhr.readyState==4 && xhr.status==302){
+      console.log("Use already exists");
+    }
+  }
+  
   xhr.open('POST','http://79.136.28.106:8888/users' , true);
-  xhr.onload = function(e) {};
+  
 
  xhr.send(JSON.stringify(data));
   //closeSelf();
