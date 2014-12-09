@@ -488,12 +488,14 @@ func getComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handl
 	if err != nil {
 		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
 	}
+
 	var result []Comment
 	var commentText, idToken string
 	var commentDate time.Time
 	var commentId, idStair uint64
 
 	for row.Next() {
+		fmt.Println(row)
 		comment := new(Comment)
 
 		fmt.Println(row)
@@ -562,7 +564,7 @@ func addComment(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 
 */
 func getPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
-	param := mux.Vars(r)["id"]
+	param := mux.Vars(req)["id"]
 	fmt.Println(param)
 	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
 	if err != nil {
