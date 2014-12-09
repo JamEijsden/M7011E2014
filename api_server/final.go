@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	//	"encoding/base64"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -50,6 +51,14 @@ type Comment struct {
 	CommentDate time.Time `json:"commentDate"`
 	IdStair     uint64    `json:"idStair"`
 	IdToken     string    `json:"idToken"`
+}
+
+//Picture struct
+type Picture struct {
+	PhotoId uint64 `json:"photoId"`
+	StairId uint64 `json:"idStair"`
+	UserId  uint64 `json:"userID"`
+	Picture string `json:"photo"`
 }
 
 // GLOBAL VARIABLE FOR CONNECTING TO DB
@@ -123,7 +132,7 @@ func listAllUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handler
 	}
 	defer con.Close()
 
-	rows, err := con.Query("select name, uid from users")
+	rows, err := con.Query("select name, uid from Users")
 	if err != nil {
 		return nil, &handlerError{err, "Error in DB", http.StatusInternalServerError}
 		//log.Printf("No user with that ID")
@@ -162,7 +171,7 @@ func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	}
 	defer con.Close()
 
-	row, err := con.Query("select * from users where idToken =?", param)
+	row, err := con.Query("select * from Users where idToken =?", param)
 	if err == sql.ErrNoRows {
 		log.Printf("No user with that ID")
 	}
@@ -238,7 +247,7 @@ func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	fmt.Println(payload.IdToken)
 	fmt.Println("")
 	fmt.Println("")
-	row, _ := con.Query("select count(*) from users where idToken=?", payload.IdToken)
+	row, _ := con.Query("select count(*) from Users where idToken=?", payload.IdToken)
 	var count int
 	for row.Next() {
 		row.Scan(&count)
@@ -249,7 +258,7 @@ func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 
 	}
 
-	_, err = con.Exec("insert into users( name, lastname, idToken, photo) values(?,?,?,?)", payload.FirstName, payload.LastName, payload.IdToken, payload.Photo)
+	_, err = con.Exec("insert into Users( name, lastname, idToken, photo) values(?,?,?,?)", payload.FirstName, payload.LastName, payload.IdToken, payload.Photo)
 
 	if err != nil {
 		fmt.Println("Kunde inte lägga till :/")
@@ -549,11 +558,42 @@ func addComment(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 }
 
 /*
-	Get picture from db
+	Get a specific picture from from db
 
 */
-func getStairPictures(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
-	return nil, nil
+func getPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	param := mux.Vars(r)["id"]
+	fmt.Println(param)
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer con.Close()
+
+	row, err := con.Query("select * from Photos where photo_id =?", param)
+	if err == sql.ErrNoRows {
+		log.Printf("No photo with that ID")
+	}
+
+	if err != nil {
+		panic(err)
+	}
+
+	photo := new(Picture)
+	for row.Next() {
+		var photo_id, user_id, stair_id uint64
+		var photo_base64 string
+
+		if err := row.Scan(&photo_id, &user_id, &stair_id, &photo_base64); err != nil {
+			log.Fatal(err)
+		}
+		photo.PhotoId = photo_id
+		photo.UserId = user_id
+		photo.StairId = stair_id
+		photo.Picture = photo_base64
+	}
+
+	return photo, nil
 }
 
 /*
@@ -563,23 +603,129 @@ func getStairPictures(rw http.ResponseWriter, req *http.Request) (interface{}, *
 func addPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
 	data, e := ioutil.ReadAll(req.Body)
 
-	fmt.Println("BEFORE UNMARSHAL" + string(data))
 	if e != nil {
 		fmt.Println("AJAJAJ 1111")
 		fmt.Println(string(data))
 		return nil, &handlerError{e, "Can't read request", http.StatusBadRequest}
 	}
 
-	// create new user called payload
-	var payload User
+	// create new picture called payload
+	var payload Picture
 	e = json.Unmarshal(data, &payload)
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println("Detta är det Unmarshlade meddelandet:")
-	fmt.Println("")
-	fmt.Println(e)
-	return nil, nil
+
+	if e != nil {
+		fmt.Println(e)
+		fmt.Println(payload)
+		return Comment{}, &handlerError{e, "Could'nt parse JSON", http.StatusInternalServerError}
+	}
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		fmt.Println("Kunde inte öppna DB")
+		return nil, &handlerError{err, "Internal server error", http.StatusInternalServerError}
+	}
+	defer con.Close()
+
+	_, err = con.Exec("insert into Photos(user_id,stair_id,photo_base64) values(?,?,?,?)", payload.UserId, payload.StairId, payload.Picture)
+
+	if err != nil {
+		fmt.Println("Kunde inte lägga till :/")
+		return nil, &handlerError{err, "Error adding to DB", http.StatusInternalServerError}
+	}
+
+	return payload, nil
+}
+
+/*
+	Retrive a users pictures
+
+*/
+func retriveUserPictures(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	param := mux.Vars(req)["id"]
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		log.Fatal(err)
+	}
+	defer con.Close()
+
+	row, err := con.Query("select * from Photos where user_id =?", param)
+	if err == sql.ErrNoRows {
+		return nil, &handlerError{err, "Error commenting on Stair", http.StatusBadRequest}
+
+	}
+
+	if err != nil {
+		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
+	}
+	var result []Picture
+	var photo_id, user_id, stair_id uint64
+	var photo_base64 string
+
+	for row.Next() {
+		picture := new(Picture)
+
+		fmt.Println(row)
+
+		if err := row.Scan(&photo_id, &user_id, &stair_id, &photo_base64); err != nil {
+			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
+		}
+
+		picture.PhotoId = photo_id
+		picture.UserId = user_id
+		picture.StairId = stair_id
+		picture.Picture = photo_base64
+		result = append(result, *picture)
+
+	}
+
+	return result, nil
+
+}
+
+/*
+	Retrive a stairs pictures
+
+*/
+func retriveStairPictures(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	param := mux.Vars(req)["id"]
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		log.Fatal(err)
+	}
+	defer con.Close()
+
+	row, err := con.Query("select * from Photos where stair_id =?", param)
+	if err == sql.ErrNoRows {
+		return nil, &handlerError{err, "Error commenting on Stair", http.StatusBadRequest}
+
+	}
+
+	if err != nil {
+		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
+	}
+	var result []Picture
+	var photo_id, user_id, stair_id uint64
+	var photo_base64 string
+
+	for row.Next() {
+		picture := new(Picture)
+
+		fmt.Println(row)
+
+		if err := row.Scan(&photo_id, &user_id, &stair_id, &photo_base64); err != nil {
+			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
+		}
+
+		picture.PhotoId = photo_id
+		picture.UserId = user_id
+		picture.StairId = stair_id
+		picture.Picture = photo_base64
+		result = append(result, *picture)
+
+	}
+
+	return result, nil
 }
 
 func main() {
@@ -605,6 +751,8 @@ func main() {
 	router.Handle("/users", handler(addUser)).Methods("POST")
 	router.Handle("/users/{id}", handler(getUser)).Methods("GET")
 	router.Handle("/users/{id}", handler(removeUser)).Methods("DELETE")
+	// hämta alla bilder en användare har laddat upp
+	router.Handle("/users/picture/{id}", handler(retriveUserPictures)).Methods("GET")
 
 	// Handlers for stairs
 	router.Handle("/stair", handler(addStair)).Methods("POST")
@@ -612,6 +760,8 @@ func main() {
 	router.Handle("/stairs", handler(getAllStairs)).Methods("GET")
 	// Get all stairs a user have added..
 	router.Handle("/stairs/{id}", handler(getUserStairs)).Methods("GET")
+	//Get alla pictures for a stair
+	router.Handle("/stair/picture/{id}", handler(retriveStairPictures)).Methods("GET")
 
 	// handlers for comments
 	router.Handle("/comment", handler(addComment)).Methods("POST")
@@ -619,7 +769,7 @@ func main() {
 
 	// Handlers for pictures
 	router.Handle("/picture", handler(addPicture)).Methods("POST")
-	router.Handle("/picture/{id}", handler(getStairPictures)).Methods("GET")
+	router.Handle("/picture/{id}", handler(getPicture)).Methods("GET")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileHandler))
 	http.Handle("/", router)
 
