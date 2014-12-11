@@ -3,40 +3,15 @@ function initializeAdd() {
   $('#add_map_canvas').empty();
   var mapCanvas = document.getElementById('add_map_canvas');
   var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+  pos = document.getElementById('geoloc').value.replace('(','').replace(')','');
+  var bits = pos.split(/,\s*/);
+  latLng = CreateLatLngObject(bits[0], bits[1]);
   var mapOptions = {
     zoom: 17,
-    center: myLatlng,
+    center: latLng,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
   map = new google.maps.Map(mapCanvas, mapOptions);
-
-
-     if(navigator.geolocation) {
-    browserSupportFlag = true;
-    navigator.geolocation.getCurrentPosition(function(position) {
-      initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-      map.setCenter(initialLocation);
-    }, function() {
-      handleNoGeolocation(browserSupportFlag);
-    });
-  }
-  // Browser doesn't support Geolocation
-  else {
-    browserSupportFlag = false;
-    handleNoGeolocation(browserSupportFlag);
-  }
-
-  function handleNoGeolocation(errorFlag) {
-    if (errorFlag == true) {
-      alert("Geolocation service failed.");
-      initialLocation = newyork;
-    } else {
-      alert("Your browser doesn't support geolocation. We've placed you in Siberia.");
-      initialLocation = siberia;
-    }
-    map.setCenter(initialLocation);
-  }
-
   
 
   google.maps.event.addListener(map, 'click', function(event) {

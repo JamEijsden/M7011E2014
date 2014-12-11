@@ -17,6 +17,57 @@ function getLocations(recData, status, stairID)
   xmlHttp.send( null );
 }
 
+function getUserStairs(user_id){
+   var xmlHttp = null;
+
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange=function() {
+    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+        var json = xmlHttp.responseText;
+        var obj = JSON.parse(json);  
+    }else{
+      return "TOMTE";
+    }
+  };
+  
+     xmlHttp.open( "GET", "http://79.136.28.106:8888/stairs/"+user_id, false );
+  
+  xmlHttp.send( null ); 
+
+}
+
+function getStair(id, marker){
+  var xmlHttp = null;
+
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange=function() {
+    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+        var json = xmlHttp.responseText;
+        var obj = JSON.parse(json);  
+      if(marker.photo == ''){
+        console.log('Finish loading pic');
+        marker.photo = obj.photo;
+        getStair(marker.id, marker);
+      }else{        
+        var json = xmlHttp.responseText;
+        var obj = JSON.parse(json); 
+        console.log('Finish loading stair: ' + obj); 
+        appendToMarker(obj, marker);
+      }
+    }else{
+      return "TOMTE";
+    }
+  };
+  if(marker.photo == ''){
+    console.log('Begun loading pic');
+    xmlHttp.open( "GET", "http://79.136.28.106:8888/stair/photo/"+id, false );   
+  }else{
+    console.log('Loading stair only');
+     xmlHttp.open( "GET", "http://79.136.28.106:8888/stair/"+id, false );
+  }
+  xmlHttp.send( null ); 
+}
+
 
 function getComments(stairID){
   var xmlHttp = null;
@@ -37,7 +88,7 @@ function getComments(stairID){
 }
 
 function postComment(form){
-
+  document.getElementById('modalComment').value = '';
   var data = {};
   for (var i = 0, ii = form.length; i < ii; ++i) {
     var input = form[i];
@@ -71,12 +122,17 @@ function getUser(id, data, action){
     if (xmlHttp.readyState==4 && xmlHttp.status==200) {
         var json = xmlHttp.responseText;
         var obj = JSON.parse(json);
+
         if(action == 'form'){
           data = JSON.parse(data);
           data.user = obj.userID;
-          sendForm(data, 'form');
+          sendForm(data, action);
+
         } else if(action == 'comment'){
           createComments(data, obj);
+
+        }else if(action == 'user'){
+          loadUser(obj);
         }
         
       }

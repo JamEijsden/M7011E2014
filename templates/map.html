@@ -1,11 +1,10 @@
 
 {{define "head"}} 
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB28dYnChM2OgEMpgLL8rOXsR7_cuGJ4NU"> </script>
 <script src="/static/js/addMarkerMap.js"></script>
 <script src="/static/js/addmarker.js"></script>
 <script src="/static/js/map.js"></script>
 <script src="/static/js/createMarker.js"></script>
-<script src="/static/js/getLocations.js"></script>
+
 
 {{end}}
 
@@ -22,98 +21,7 @@
 </div>
 
 
-<!--############### THIS IS POPUP MODAL FOR ADDING STAIRS ############################--><!--
-<div class="modal fade" id="addStairsModal"  tabindex="-1" role="dialog"  aria-labelledby="addStairsModal" aria-hidden="true" style="display:none;">
-    <div class="modal-dialog" style="height:60%; width:60%;">
-        <div class="modal-content" style="text-align: center;">
-            <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&amp;times;</button>
-            <h4 class="modal-title" id="myModalLabel">Add location</h4>
-            </div>
-            <div class="modal-body" >
-                
-            	<div class="container" id="add_map_canvas"style="position:relative; margin: 25px auto;height:250px; width:500px;"></div>
-            
-        		<div class="container" id="inner" style="">
 
-
-					<form class="form-horizontal" role="form" name="newLocation" action="javascript:void(0);" method="POST">
-					  <div class="form-group">
-					    <label class="control-label col-sm-2" for="loc">Location:</label>
-					    <div class="col-sm-10"> 
-					      <input type="input" class="form-control" id="loc" name="position" placeholder="Stairs' Location">
-					    </div>
-					  </div>
-					  <div class="form-group">
-					    <label class="control-label col-sm-2" for="stairs">Name:</label>
-					    <div class="col-sm-10">
-					      <input type="input" class="form-control" name="stairname"id="stairs" placeholder="The Humpty Dumpty Stairs">
-					    </div>
-					  </div>
-					  <div class="form-group">
-					    <label class="control-label col-sm-2" for="stairs">Description:</label>
-					    <div class="col-sm-10">
-					      <textarea class="form-control" name="description" row="3" id="desc" placeholder="What is special about this place?"></textarea>
-					    </div>
-					  </div>
-					  <input type="hidden" class="form-control "value='1' name="user" id="stairs" placeholder="userid">
-					  <input type="hidden" class="form-control "value='http://media.bymk.se/2014/06/katten_jarvis.jpg' name="photo" id="stairs" placeholder="photo">
-					  <!--<div class="form-group"> 
-					    <label class="control-label col-sm-2" for="loc" name="photo">Picture:</label>
-					    <div class="col-sm-10"> 
-					      <input type="file" class="btn btn-default">
-					    </div>
-					  </div>
-					  <div class="form-group"> 
-					    <div class="col-sm-offset-2 col-sm-10">
-					      
-					    </div>
-					  </div>
-					
-
-
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" onclick="submitForm(this.form);" data-dismiss="modal">Add</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-        </form>
-    </div>
-  </div>
-</div>
-######################################  END OF ADD STAIRS MODAL ##################### -->
- <!-- #################################### MODAL FOR STAIR PAGE ######################### 
-
-<div class="modal fade" id="locationModal"  tabindex="-1" role="dialog" aria-labelledby="locationModal" aria-hidden="true">
-    <div class="modal-dialog" style="height:100%; width:100%;">
-        <div class="modal-content" style="text-align: center;">
-            <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&amp;times;</button>
-            <h4 class="modal-title" id="myModalLabel">Add location</h4>
-            </div>
-            <div class="modal-body" >
-                
-            	THIS IS A COOL MODAL!
-					
-
-
-            </div>
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-primary" onclick="submitForm(this.form);" data-dismiss="modal">Add</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-
-
- -->
 <div class="modal fade" id="addStairsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -174,7 +82,7 @@
  <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header" style='border-bottom:0px;'>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4 class="modal-title" id="myModalLabel"></h4>
             <ul class="nav nav-tabs" id="tabContent">
@@ -183,13 +91,13 @@
         		<li><a href="#photos" data-toggle="tab">Photos</a></li>
 		</ul>
           </div>
-          <div class="modal-body" style='height:67%;width:100%;'>
+          <div class="modal-body" id='modalCont' style='position: relative;  overflow-y: auto; max-height: 300px;padding: 15px;'>
 
 
-          	<div class="tab-content">
+          	<div class="tab-content" id='tabcontent'>
 	        	<div class="tab-pane active" id="details">
 
-	            <div class='container' style='height:100%;width:100%;margin:0;text-align:center;'>
+	            <div class='container'  style='height:100%;width:100%;margin:0;text-align:center;'>
 			    	<div class='row' style='float:left; height:80%; width:50%;'>
 			      			<img src=''id='stairPhoto' height='70%' width='80%'>
 			    	</div>
@@ -201,22 +109,14 @@
 	      		</div>
 
 	        	<div class="tab-pane" id="comments">
-	        		<div class='row' id='commentDiv' style='height:60%; width:100%;'>
-	   					<div id='addCommentsHere'></div>
-	        		</div>
-	        		<div class='row' id="commentFormDiv">
-	        		<form class="form-horizontal" role="form" name="commentForm" action="javascript:void(0);" method="POST">
-	        		  <div class="form-group">
-					    <label class="control-label col-sm-2" for="comment">Comment:</label>
-					    <div class="col-sm-10">
-					      <textarea class="form-control" name="commentText" row="3" id="desc" placeholder="Leave a comment"></textarea>
-					    </div>
-					  </div>
-					  <input type="hidden" class="form-control "value='' name="idStair" id="idstair">
-					  <input type="hidden" class="form-control "value='' name="idToken" id="idtoken">
-					  <button type="submit" class="btn btn-primary" onclick="postComment(this.form);">Submit</button>
-	        		</form>
-	        		</div>
+	   				<div class='container' id='commentCont' style='text-align:center;' >
+	   					<div class='row' id='addCommentsHere' style=' max-width:80%;'>
+	   						
+	   					</div>
+	     
+	        			
+	   				</div>
+
 	        	</div> 
 
 
@@ -227,8 +127,21 @@
           		
           </div>
 
-          <div class="modal-footer" style='bottom:0;'>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <div class="modal-footer">
+        		<div class='row' id="commentFormDiv" style='text-align:center;'>
+
+	        		<form class="form-horizontal" role="form" name="commentForm" action="javascript:void(0);" method="POST">
+	        		  <div class="form-group">
+					    <div class="col-sm-10" style='width:100%; height:30%;'>
+					      <textarea class="form-control" style='width:90%; height:100%; resize:none; margin:0 auto;'name="commentText" style='width:80%; float:left;' row="3" id="modalComment" placeholder="Leave a comment"></textarea>
+					      <button type="submit" class="btn btn-primary" style='width:20%; margin:5px;'onclick="postComment(this.form);">Submit</button>
+					    </div>
+					  </div>
+					  <input type="hidden" class="form-control "value='' name="idStair" id="idstair">
+					  <input type="hidden" class="form-control "value='' name="idToken" id="idtoken">
+					  
+	        		</form>
+	        		</div>
           </div>
         </div>
 

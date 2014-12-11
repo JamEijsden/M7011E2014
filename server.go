@@ -58,59 +58,6 @@ func mapHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func mapTestHandler(w http.ResponseWriter, r *http.Request) {
-	if t, err := template.ParseFiles("templates/mapTest.html", "templates/map.html"); err != nil {
-		// Something gnarly happened.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	} else {
-		// return to client via t.Execute
-		t.Execute(w, nil)
-	}
-}
-
-func addStairsHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("YOLO POPUP")
-
-	if t, err := template.ParseFiles("_add.html", "templates/addstairs.html"); err != nil {
-		// Something gnarly happened.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	} else {
-		// return to client via t.Execute
-		t.Execute(w, nil)
-	}
-
-}
-
-func stairsHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("YOLO POPUP")
-
-	if t, err := template.ParseFiles("_stair.html", "templates/stairs.html"); err != nil {
-		// Something gnarly happened.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	} else {
-		// return to client via t.Execute
-		t.Execute(w, nil)
-	}
-
-}
-
-func photosHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("YOLO POPUP")
-
-	if t, err := template.ParseFiles("_stair.html", "templates/stairs.html"); err != nil {
-		// Something gnarly happened.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	} else {
-		// return to client via t.Execute
-		t.Execute(w, nil)
-	}
-
-}
-
-func backHandler(w http.ResponseWriter, r *http.Request) {
-
-}
-
 func main() {
 
 	//fs := justFilesFilesystem{http.Dir("/static")}
@@ -119,10 +66,6 @@ func main() {
 	http.HandleFunc("/home/", homeHandler)
 	http.HandleFunc("/user/", userHandler)
 	http.HandleFunc("/map/", mapHandler)
-	http.HandleFunc("/mapTest/", mapTestHandler)
-	http.HandleFunc("/map/addStairs/", addStairsHandler)
-	http.HandleFunc("/map/stairs/", stairsHandler)
-	http.HandleFunc("/map/stairs/photos", photosHandler)
 
 	var i int
 	fmt.Println("Run server on:\n1. localhost:9999\n2. 192.168.1.230:9999\nChoose a connection(1 or 2).")

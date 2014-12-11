@@ -20,6 +20,7 @@ function placeMarker(location) {
                 title: ""+location,
               icon: "http://maps.google.com/mapfiles/ms/micons/blue.png"
             });
+        updateMarker(marker.getPosition());
   } else{
       console.log(marker.getTitle() + " " + marker.getPosition() + " " + location);
       marker.setPosition(location);
@@ -75,6 +76,7 @@ function submitForm(form, type){
 }
 
 function prepareForm(data, type){
+  
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '562407890559656',
@@ -99,7 +101,11 @@ function sendForm(data, type) {
     data.user = parseInt(data.user);
     xhr.open('POST','http://79.136.28.106:8888/stair' , true);
   
-  xhr.onload = function(e) {};
+  xhr.onreadystatechange=function() {
+    if (xhr.readyState==4 && xhr.status==200) {
+      console.log("SUCCESSFULLY UPLOADED");
+    }
+  }
   if(type!=undefined){
     xhr.send(JSON.stringify(data));
   }

@@ -1,20 +1,91 @@
-{{define "title"}} User Page {{end}}
 
+	
 
 {{define "head"}} 
-
+	<script src="/static/js/loadUser.js"></script>
 {{end}}
 
 
+{{define "title"}}
+ 		<h2 id='userTitle'></h2> 
+{{end}}
+
+
+
+
 {{define "content"}}
+		<p id = "hej"> Here I, as a User, will be able to find my uploaded location, photos etc. </p>
+		<input type="button" class="btn btn-primary" onclick="createUserLocations();" value="Add Location">
+
+		<div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style='border-bottom:0px;'>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel"></h4>
+            <ul class="nav nav-tabs" id="tabContent">
+        		<li class="active"><a href="#details" data-toggle="tab">Details</a></li>
+        		<li><a href="#comments" data-toggle="tab">Comments</a></li>
+        		<li><a href="#photos" data-toggle="tab">Photos</a></li>
+		</ul>
+          </div>
+          <div class="modal-body" id='modalCont' style='position: relative;  overflow-y: auto; max-height: 300px;padding: 15px;'>
 
 
+          	<div class="tab-content" id='tabcontent'>
+	        	<div class="tab-pane active" id="details">
 
-<p id = "hej"> Here I, as a User, will be able to find my uploaded location, photos etc. </p>
+	            <div class='container'  style='height:100%;width:100%;margin:0;text-align:center;'>
+			    	<div class='row' style='float:left; height:80%; width:50%;'>
+			      			<img src=''id='stairPhoto' height='70%' width='80%'>
+			    	</div>
+			    	<div class='row' style='float:right; margin:5px; text-align:left; height:80%; width:50%;'>
+			     		<p style='font-size:16px;' id="stairDesc"></p>
+			    	</div>
+		  		</div>
+
+	      		</div>
+
+	        	<div class="tab-pane" id="comments">
+	   				<div class='container' id='commentCont' style='text-align:center;' >
+	   					<div class='row' id='addCommentsHere' style=' max-width:80%;'>
+	   						
+	   					</div>
+	     
+	        			
+	   				</div>
+
+	        	</div> 
 
 
+	        	<div class="tab-pane" id="photos">
+	        		Add photos here!
+	       		</div> 
+			</div>
+          		
+          </div>
 
+          <div class="modal-footer">
+        		<div class='row' id="commentFormDiv" style='text-align:center;'>
 
+	        		<form class="form-horizontal" role="form" name="commentForm" action="javascript:void(0);" method="POST">
+	        		  <div class="form-group">
+					    <div class="col-sm-10" style='width:100%; height:30%;'>
+					      <textarea class="form-control" style='width:90%; height:100%; resize:none; margin:0 auto;'name="commentText" style='width:80%; float:left;' row="3" id="desc" placeholder="Leave a comment"></textarea>
+					      <button type="submit" class="btn btn-primary" style='width:20%; margin:5px;'onclick="postComment(this.form);">Submit</button>
+					    </div>
+					  </div>
+					  <input type="hidden" class="form-control "value='' name="idStair" id="idstair">
+					  <input type="hidden" class="form-control "value='' name="idToken" id="idtoken">
+					  
+	        		</form>
+	        	</div>
+          </div>
+        </div>
+
+      
+      </div>
+    </div>
 
 {{end}}
 

@@ -1,7 +1,6 @@
 // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
-    console.log(response);
     //var div_FBLogin = document.getElementById('fb-login');
     //var div_FBLike = document.getElementById('fb-liike');
     // The response object is returned with a status field that lets the
@@ -10,23 +9,24 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
-    //  div_FBLogin.style.display = 'inline';
-     // div_FBLike.style.display = 'inline';
-      //replace_login(true);
-      if(document.location.href == "http://trollegeuna.se:9999/") {
-		document.location.href = "http://trollegeuna.se:9999/map/";
-	}
+      if(document.location.href == "http://trollegeuna.se:9999/map/"){
+      	initialize();
+      } 
       testAPI();
-
+      document.getElementById('hidden').style.display = 'block';
     } else if (response.status === 'not_authorized') {
-      document.getElementById('hidden').style.display = "block";
+      if(document.location.href != "http://trollegeuna.se:9999/") {
+		document.location.href = "http://trollegeuna.se:9999/";
+	}
       // The person is logged into Facebook, but not your app.
       //div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'none';
       //replace_login(false);
 
     } else {
-      document.getElementById('hidden').style.display = "block";
+      if(document.location.href != "http://trollegeuna.se:9999/") {
+		document.location.href = "http://trollegeuna.se:9999/";
+	  }
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
       //replace_login(false);
@@ -50,17 +50,18 @@
       FB.logout() 
       window.location.reload();
   }
+
   function login() {
       FB.login(function(response) {
           if (response.authResponse) {
               // connected
 
-	    checkLoginState();
+	    	//checkLoginState();
 	      //window.location.href = "http://trollegeuna.se:9999/map/";
           } else {
               // cancelled
-              replace_login(false);
-		alert('User cancelled login or did not fully authorize.');
+            replace_login(false);
+			alert('User cancelled login or did not fully authorize.');
           }
       });
   }
@@ -76,7 +77,7 @@
     }
   }
 */
-  window.fbAsyncInit = function() {
+  function fbInit() {
   FB.init({
     appId      : '562407890559656',
     cookie     : true,  // enable cookies to allow the server to access 
@@ -96,12 +97,9 @@
   //    your app or not.
   //
   // These three cases are handled in the callback function.
+  	checkLoginState();
+  }
 
-  FB.getLoginStatus(function(response) {
-    statusChangeCallback(response);
-  });
-
-  };
 
   // Load the SDK asynchronously
   (function(d, s, id) {
@@ -117,39 +115,13 @@
   
   function testAPI() {
    // document.location = "localhost:9999/about/";
-    console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
-      sendUser(response);
-     //   document.getElementById('photo').src="https://graph.facebook.com/"+response.id+"/picture"; 
-     if(document.location.href != "http://trollegeuna.se:9999/"){
-        loadProfile(response);
-     }
+      loadProfile(response);
+      if(document.location.href == "http://trollegeuna.se:9999/user/"){
+      	getUser(response.id, '', 'user');
+      }
     });
 }
 
-  function sendUser(fbjson) {
-  var data = {};
-  console.log("fbjson: "+fbjson);
-  data.id=fbjson.id;
-  data.first_name = fbjson.first_name;
-  data.last_name = fbjson.last_name;
-  data.photo = "graph.facebook.com/"+fbjson.id+"/picture?type=large";
-  console.log("data: "+data);
-  //fbjson.photo = "graph.facebook.com/"+fbjson.id+"/picture?type=large";
-  var xhr = new XMLHttpRequest();
-   xhr.onreadystatechange=function() {
-    if (xhr.readyState==4 && xhr.status==200) {
-      console.log('User added to DB');
-    }else if(xhr.readyState==4 && xhr.status==302){
-      console.log("Use already exists");
-    }
-  }
-  
-  xhr.open('POST','http://79.136.28.106:8888/users' , true);
-  
-
- xhr.send(JSON.stringify(data));
-  //closeSelf();
-  
-  }
+window.onload = fbInit;

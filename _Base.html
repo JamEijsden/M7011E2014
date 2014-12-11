@@ -6,26 +6,29 @@
 <link rel="shortcut icon" type="image/png" href="/static/image/smiley.jpg"/>
 <link href="/static/css/bootstrap.css" type="text/css" rel="stylesheet">
 <!--<script src="https://maps.googleapis.com/maps/api/js"></script>-->
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB28dYnChM2OgEMpgLL8rOXsR7_cuGJ4NU"> </script>
 <script src="http://connect.facebook.net/en_US/all.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
- <script src="/static/js/facebook.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <style type="text/css">
     body{
     	padding-top: 35px;
     }
 </style>
-<script src="/static/js/addmarker.js"></script>
-<script src="/static/js/addMarkerMap.js"></script>
+
 <script src="/static/js/loadPhoto.js"></script>
 <script src="/static/js/loadPage.js"></script>
 <script src="/static/js/getData.js"></script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB28dYnChM2OgEMpgLL8rOXsR7_cuGJ4NU"> </script>
-<script src="/static/js/map.js"></script>
-<script src="/static/js/createMarker.js"></script>
-<script src="/static/js/getLocations.js"></script>
+
+<!--<script src="/static/js/loadGeoloc.js"></script>-->
+
+{{template "head" .}}
+
 </head>
 <body>
+<script src="/static/js/fbCheck.js"></script>
+<div id='hidden' style='display:none;'>
+<input type="hidden" class="form-control "value='' id="geoloc">
 <div class="container" style="text-align:center;">
 
 <div id="fb-root"></div>   
@@ -42,7 +45,7 @@
 </div>
 </div>
 </div>
-</div>
+
 
 <div class="container" id="dibs-sidebar" style="position:fixed; left:0; width:20%; float: left; text-align: center;" >
 	<div class="row" >
@@ -55,10 +58,11 @@
 	</div>
 	<div class="row">
       <ul class="nav nav-pills nav-stacked" role="tablist">
-        <li><a id="fbname" href="/user/" onclick="loadPage('user');" ></a></li>
-		<li><a href="/home/">About</a></li>
-		<li><a href="javascript:void(0);" onclick="initialize();">Map</a></li>       
-		<li><div class="fb-login-button" id="fb-button" data-max-rows="3" data-size="medium" data-show-faces="false" data-auto-logout-link="true"></div></li>
+        <li><a id="fbname" href="/user/"></a></li>
+        <li><a href="/map/">Map</a></li>   
+		<li><a href="/home/">About</a></li>    
+		<!--<li><div class="fb-login-button" id="fb-button" data-max-rows="3" data-size="large" data-show-faces="false" data-auto-logout-link="true"></div></li>-->
+		<li> <button type="button" class="btn btn-primary" onclick='logout();' >Logout</button></li>
 
       </ul>
      </div>
@@ -79,6 +83,7 @@
 			</footer>
 		</div>
 	</div>
+</div>
 </div>
 </body>
 </html>                                		
