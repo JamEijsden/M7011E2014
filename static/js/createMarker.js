@@ -13,6 +13,7 @@ function createMarker(location) {
   document.getElementById('myModalLabel').innerHTML = marker.getTitle();
   google.maps.event.addListener(marker, 'click', function () {
       getStair(this.id,this);
+      getPreviewStair(this.id);
   });
 }
 
@@ -64,6 +65,16 @@ function getUserFromComment(comments){
     getUser(comments[i].idToken,comments[i], 'comment');
   }
 
+}
+
+function createPhotos(photos){
+  var mamaDiv = document.getElementById('photos');
+  for(var i = 0; i < photos.length; i++){
+    var img = document.createElement('img');
+    href.id = photos[i].id;
+    href.src = photos[i].preview;
+    mamaDiv.appendChild(href);
+  }
 }
 
 function createComments(comment, user){

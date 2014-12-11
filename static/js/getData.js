@@ -130,6 +130,7 @@ function getUser(id, data, action){
 
         } else if(action == 'comment'){
           createComments(data, obj);
+          
         }else if(action == 'user'){
           loadUser(obj);
         }
