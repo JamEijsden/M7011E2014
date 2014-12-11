@@ -238,3 +238,22 @@ function getPreviewUser(userID){
   xmlHttp.open( "GET", "http://79.136.28.106:8888/users/picture/preview/"+userID, false );   
   xmlHttp.send( null );
 }
+
+
+function postPicture(result){
+          
+          var data = {};
+          data.picture = result;
+          console.log(result);
+
+          xmlHttp = new XMLHttpRequest();
+         xmlHttp.onreadystatechange=function() {
+          if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+            console.log('UPLOAD SUCCESS');     
+          }else{
+            return "ERROR";
+          }
+        };
+        xmlHttp.open( "POST", "http://79.136.28.106:8888/picture", true );
+        xmlHttp.send(JSON.stringify(data));
+}
