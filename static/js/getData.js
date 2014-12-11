@@ -240,20 +240,24 @@ function getPreviewUser(userID){
 }
 
 
-function postPicture(result){
+function postPicture(form){
           
-          var data = {};
-          data.picture = result;
-          console.log(result);
+  var data = {};
+  for (var i = 0, ii = form.length; i < ii; ++i) {
+    var input = form[i];
+    if (input.name) {
+      data[input.name] = input.value;
+    }
+  }
 
-          xmlHttp = new XMLHttpRequest();
-         xmlHttp.onreadystatechange=function() {
-          if (xmlHttp.readyState==4 && xmlHttp.status==200) {
-            console.log('UPLOAD SUCCESS');     
-          }else{
-            return "ERROR";
-          }
-        };
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange=function() {
+    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+      console.log('UPLOAD SUCCESS');     
+    }else{
+      return "ERROR";
+    }
+  };
         xmlHttp.open( "POST", "http://79.136.28.106:8888/picture", true );
         xmlHttp.send(JSON.stringify(data));
 }

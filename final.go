@@ -382,7 +382,10 @@ func addPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 		return nil, &handlerError{err, "Error adding to DB", http.StatusInternalServerError}
 	}
 
-	return payload, nil
+	returnvariables := new(Picture)
+	returnvariables.PhotoId = payload.PhotoId
+	returnvariables.Preview = payload.Preview
+	return returnvariables, nil
 }
 
 /*
