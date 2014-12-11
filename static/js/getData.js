@@ -199,3 +199,41 @@ function send(result){
         xmlHttp.open( "POST", "http://79.136.28.106:8888/picture", true );
         xmlHttp.send(JSON.stringify(data));
 }
+
+
+function getPreviewStair(stairID){
+  var xmlHttp = null;
+
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange=function() {
+    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+        var json = xmlHttp.responseText;
+        var obj = JSON.parse(json);
+        createPhotos(obj);  
+        
+    }else{
+      return "Error";
+    }
+  };
+  xmlHttp.open( "GET", "http://79.136.28.106:8888/stair/picture/preview/"+stairID, false );   
+  xmlHttp.send( null );
+}
+
+
+function getPreviewUser(userID){
+  var xmlHttp = null;
+
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange=function() {
+    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+        var json = xmlHttp.responseText;
+        var obj = JSON.parse(json);
+        createPhotos(obj);  
+        
+    }else{
+      return "Error";
+    }
+  };
+  xmlHttp.open( "GET", "http://79.136.28.106:8888/users/picture/preview/"+userID, false );   
+  xmlHttp.send( null );
+}
