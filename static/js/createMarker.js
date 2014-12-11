@@ -7,7 +7,8 @@ function createMarker(location) {
       map: map,
       title: location.stairname,
       description: location.description,
-      photo:""
+      photo:"",
+      creator:location.user;
 
   });   
   document.getElementById('myModalLabel').innerHTML = marker.getTitle();
@@ -59,15 +60,31 @@ function getUserFromComment(comments){
   $("#addCommentsHere").empty();
   //document.removeChild();
  
-  
-  
   for(var i = 0; i < comments.length; i++){
     getUser(comments[i].idToken,comments[i], 'comment');
   }
 
 }
 
+function changeModalInput(tab){
+    if(tab == 'comments'){
+      document.getElementById('modalComments').style.display = 'block';
+      document.getElementById('modalPhotos').style.display = 'hidden';
+    }else if(tab == 'photos'){
+      document.getElementById('modalComments').style.display = 'hidden';
+      document.getElementById('modalPhotos').style.display = 'block';
+
+    }else(){
+      document.getElementById('modalComments').style.display = 'hidden';
+      document.getElementById('modalPhotos').style.display = 'hidden';
+    }
+}
+
 function createPhotos(photos){
+  if(photos == null){
+      console.log('No photos to load');
+      return;
+  }
   var mamaDiv = document.getElementById('photos');
   for(var i = 0; i < photos.length; i++){
     var img = document.createElement('img');
