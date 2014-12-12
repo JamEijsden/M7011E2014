@@ -59,15 +59,15 @@ function submitForm(form, type){
   var image = document.getElementById('image').files;
   if(image.length){
     var reader = new FileReader();
-
-
-        reader.onload = success;
         function success(evt){
           data.photo = evt.target.result;
           prepareForm(data, type);
           //alert(evt.target.result);
 
         }
+
+        reader.onload = success;
+        
      reader.readAsDataURL(image[0]);
 
   

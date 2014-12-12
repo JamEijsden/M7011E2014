@@ -7,6 +7,7 @@ function getLocations(recData, status, stairID)
     if (xmlHttp.readyState==4 && xmlHttp.status==200) {
         var json = xmlHttp.responseText;
         var obj = JSON.parse(json);
+        console.log(obj);
         loadMap(obj);  
         
     }else{
@@ -133,6 +134,8 @@ function getUser(id, data, action){
           
         }else if(action == 'user'){
           loadUser(obj);
+        }else if('me'){
+            $('me').value = obj.userID;
         }
         
       }
@@ -144,19 +147,30 @@ function getUser(id, data, action){
   xmlHttp.send( null );
 }
 
-function uploadPhoto(img){
+function uploadPhoto(form){
 
-  if(img.files.length){
+
+  var data = {};
+  for (var i = 0, ii = form.length; i < ii; ++i) {
+    var input = form[i];
+    if (input.name) {
+      data[input.name] = input.value;
+    }
+  }
+  data.userID = parseInt(data.userID);
+  data.idStair = parseInt(data.idStair);
+  var photo = document.getElementById('modalImage');
+  if(photo.files.length){
     var reader = new FileReader();
-
-
-        reader.onload = success;
         function success(evt){
-          send(evt.target.result);
+          data.photo = evt.target.result; 
+          send(data);
           //alert(evt.target.result);
 
-        }
-     reader.readAsDataURL(img.files[0]);
+        };
+        reader.onload = success;
+        
+     reader.readAsDataURL(photo.files[0]);
        
          
       
@@ -178,22 +192,24 @@ function uploadPhoto(img){
   */  }
   }
  
-function send(result){
+function send(data){
           
-          var data = {};
-          data.picture = result;
-          console.log(result);
+          
+          console.log(data);
 
           xmlHttp = new XMLHttpRequest();
          xmlHttp.onreadystatechange=function() {
           if (xmlHttp.readyState==4 && xmlHttp.status==200) {
-          var res = JSON.parse(xmlHttp.responseText); 
-          console.log(res);
-          var image = new Image();
-          image.src = res
-          document.body.appendChild(image);
-          console.log('UPLOAD SUCCESS');     
-          }else{
+
+            getPreviewStair(data.idStair);
+            var res = JSON.parse(xmlHttp.responseText); 
+            console.log(res);
+            console.log('UPLOAD SUCCESS'); 
+
+            var suc = document.getElementById('suc');
+            suc.innerHTML =  "Upload successful!";
+            setTimeout(function(){console.log('TIMOUT DONE');document.getElementById('suc').innerHTML ="Upload picture";},3000);   
+            }else{
             return "ERROR";
           }
         };
@@ -206,7 +222,7 @@ function getPreviewStair(stairID){
   var xmlHttp = null;
 
   xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange=function() {
+   xmlHttp.onreadystatechange=function() {
     if (xmlHttp.readyState==4 && xmlHttp.status==200) {
         var json = xmlHttp.responseText;
         var obj = JSON.parse(json);
@@ -240,28 +256,6 @@ function getPreviewUser(userID){
 }
 
 
-function postPicture(form){
-          
-  var data = {};
-  for (var i = 0, ii = form.length; i < ii; ++i) {
-    var input = form[i];
-    if (input.name) {
-      data[input.name] = input.value;
-    }
-  }
-
-  xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange=function() {
-    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
-      console.log('UPLOAD SUCCESS');     
-    }else{
-      return "ERROR";
-    }
-  };
-        xmlHttp.open( "POST", "http://79.136.28.106:8888/picture", true );
-        xmlHttp.send(JSON.stringify(data));
-}
-
 function getStairUser(userID){
   var xmlHttp = null;
 
@@ -279,3 +273,4 @@ function getStairUser(userID){
   xmlHttp.open( "GET", "http://79.136.28.106:8888/users/stairs/"+userID, false );   
   xmlHttp.send( null );
 }
+

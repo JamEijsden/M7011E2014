@@ -12,7 +12,7 @@
 
 {{define "content"}}  
 <div>
-	<div onload='initialize();' id="main_map_canvas"style="min-height:500px; min-width:500px;"></div>
+	<div onload='initialize();' id="main_map_canvas"style="min-height:400px; min-width:400px;"></div>
 	<div class="row" style="margin:15px; margin-left:0px;">
 		<!--<form action="addStairs" onclick="window.open(this.action, 'mywin','toolbar=0,menubar=0,scrollbars=0,height=600,width=720'); return false">
 		</form>-->
@@ -86,9 +86,9 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4 class="modal-title" id="myModalLabel"></h4>
             <ul class="nav nav-tabs" id="tabContent">
-        		<li class="active"><a href="#details" data-toggle="tab">Details</a></li>
-        		<li><a href="#comments" data-toggle="tab">Comments</a></li>
-        		<li><a href="#photos" data-toggle="tab">Photos</a></li>
+        		<li class="active"><a href="#details" data-toggle="tab" id='hrefDetails' onclick='changeModalInput("details");'>Details</a></li>
+        		<li><a href="#comments" data-toggle="tab" id='hrefComments' onclick='changeModalInput("comments");'>Comments</a></li>
+        		<li><a href="#photos" data-toggle="tab" id='hrefPhotos' onclick='changeModalInput("photos");'>Photos</a></li>
 		</ul>
           </div>
           <div class="modal-body" id='modalCont' style='position: relative;  overflow-y: auto; max-height: 300px;padding: 15px;'>
@@ -120,16 +120,15 @@
 	        	</div> 
 
 
-	        	<div class="tab-pane" id="photos">
-	        		Add photos here!
+	        	<div class="tab-pane" id="photos" style='text-align:center;'>
+	        
 	       		</div> 
 			</div>
           		
           </div>
 
           <div class="modal-footer">
-        		<div class='row' id="commentFormDiv" style='text-align:center;'>
-
+        		<div class='row' id="commentFormDiv" style='text-align:center; display:none;'>
 	        		<form class="form-horizontal" role="form" name="commentForm" action="javascript:void(0);" method="POST">
 	        		  <div class="form-group">
 					    <div class="col-sm-10" style='width:100%; height:30%;'>
@@ -141,7 +140,21 @@
 					  <input type="hidden" class="form-control "value='' name="idToken" id="idtoken">
 					  
 	        		</form>
-	        		</div>
+	        	</div>
+	        	<div class='row' id='uploadFormDiv' style='display:none;'>
+	        	<form class="form-horizontal" role="form" name="uploadForm" action="javascript:void(0);" method="POST">	
+	        		<div class="form-group"> 
+			
+					    <div class="col-sm-10" style=" width:100%; margin: 0 auto;" id='formInput'> 
+					      <input type="file" class="btn btn-default" id='modalImage' onchange="uploadPhoto(this.form);" style="margin: 0 auto;" name='photo'>
+					      <p id='suc'style="text-align:center;Margin: 2px;"> Upload picture </p>
+					      <input type="hidden" class="form-control "value='' name="userID" id="modalUser" >
+					      <input type="hidden" class="form-control "value='' name="idStair" id="modalStair">
+					       
+					    </div>
+					 </div>
+					 </form>
+	        	</div>
           </div>
         </div>
 
