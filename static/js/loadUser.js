@@ -4,7 +4,21 @@ function loadUser(data){
 	
 }
 
-function createUserLocations(){
+function createUserLocations(data){
+	parent = document.getElementById('userLoc');
+	if(){
+		parent.innerHTML = 'No locations to show';
+		return;
+	}
+	$('userLoc').empty();
+	for(var i = 0; i < data.length;i++){
+		var loc = document.createElement('input');
+		loc.id = data.id;
+		loc.class = "btn btn-primary";
+		loc.onclick = "openModal();";
+		loc.value = data.stairname;
+		parent.appendChild(loc);
+	}
 	
 	
 }
