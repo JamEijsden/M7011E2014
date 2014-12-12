@@ -8,13 +8,15 @@ function createMarker(location) {
       title: location.stairname,
       description: location.description,
       photo:"",
-      creator:location.user;
+      creator:location.user
 
   });   
   document.getElementById('myModalLabel').innerHTML = marker.getTitle();
   google.maps.event.addListener(marker, 'click', function () {
       getStair(this.id,this);
       getPreviewStair(this.id);
+      document.getElementById('modalUser').value = this.creator;
+      document.getElementById('modalStair').value = this.id;
   });
 }
 
@@ -27,7 +29,7 @@ function appendToMarker(data, marker){
   document.getElementById('stairDesc').innerHTML = data.description;
   FB.api('/me', function(response) {
     document.getElementById('idtoken').value = response.id;    
-    document.getElementById('idstair').value = data.id;
+    document.getElementById('idstair').value = $('me').value;
   });
   getComments(marker.id);
   $('#modal2').on('show.bs.modal', function () {
@@ -68,29 +70,33 @@ function getUserFromComment(comments){
 
 function changeModalInput(tab){
     if(tab == 'comments'){
-      document.getElementById('modalComments').style.display = 'block';
-      document.getElementById('modalPhotos').style.display = 'hidden';
+      document.getElementById('commentFormDiv').style.display = 'block';
+      document.getElementById('uploadFormDiv').style.display = 'none';
     }else if(tab == 'photos'){
-      document.getElementById('modalComments').style.display = 'hidden';
-      document.getElementById('modalPhotos').style.display = 'block';
+      document.getElementById('commentFormDiv').style.display = 'none';
+      document.getElementById('uploadFormDiv').style.display = 'block';
 
-    }else(){
-      document.getElementById('modalComments').style.display = 'hidden';
-      document.getElementById('modalPhotos').style.display = 'hidden';
+    }else{
+      document.getElementById('commentFormDiv').style.display = 'none';
+      document.getElementById('uploadFormDiv').style.display = 'none';
     }
 }
 
 function createPhotos(photos){
   if(photos == null){
-      console.log('No photos to load');
+      document.getElementById('photos').innerHTML = "<p id='nopics'>There are no picture for this location</p>";
       return;
   }
+   $('#photos').empty();
+
   var mamaDiv = document.getElementById('photos');
+
   for(var i = 0; i < photos.length; i++){
     var img = document.createElement('img');
-    href.id = photos[i].id;
-    href.src = photos[i].preview;
-    mamaDiv.appendChild(href);
+    img.style.cssText = ' margin: 5px;'
+    img.id = photos[i].id;
+    img.src = photos[i].preview;
+    mamaDiv.appendChild(img);
   }
 }
 

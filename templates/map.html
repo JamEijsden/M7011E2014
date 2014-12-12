@@ -12,7 +12,7 @@
 
 {{define "content"}}  
 <div>
-	<div onload='initialize();' id="main_map_canvas"style="min-height:500px; min-width:500px;"></div>
+	<div onload='initialize();' id="main_map_canvas"style="min-height:400px; min-width:400px;"></div>
 	<div class="row" style="margin:15px; margin-left:0px;">
 		<!--<form action="addStairs" onclick="window.open(this.action, 'mywin','toolbar=0,menubar=0,scrollbars=0,height=600,width=720'); return false">
 		</form>-->
@@ -120,8 +120,8 @@
 	        	</div> 
 
 
-	        	<div class="tab-pane" id="photos">
-	        		Add photos here!
+	        	<div class="tab-pane" id="photos" style='text-align:center;'>
+	        
 	       		</div> 
 			</div>
           		
@@ -141,17 +141,19 @@
 					  
 	        		</form>
 	        	</div>
-	        	<div>
+	        	<div class='row' id='uploadFormDiv' style='display:none;'>
+	        	<form class="form-horizontal" role="form" name="uploadForm" action="javascript:void(0);" method="POST">	
 	        		<div class="form-group"> 
-					    <label class="control-label col-sm-2" for="loc" name="photo">Upload: </label>
-					    <div class="col-sm-10"> 
-					      <input type="file" class="btn btn-default" id='modalImage' name='photo'>
+			
+					    <div class="col-sm-10" style=" width:100%; margin: 0 auto;" id='formInput'> 
+					      <input type="file" class="btn btn-default" id='modalImage' onchange="uploadPhoto(this.form);" style="margin: 0 auto;" name='photo'>
+					      <p id='suc'style="text-align:center;Margin: 2px;"> Upload picture </p>
 					      <input type="hidden" class="form-control "value='' name="userID" id="modalUser" >
-					      <input type="hidden" class="form-control "value='' name="idStair" id="modalStairs">
-					      <button type="submit" class="btn btn-primary" style='width:20%; margin:5px;'onclick="postPicture(this.form);">Submit</button>
+					      <input type="hidden" class="form-control "value='' name="idStair" id="modalStair">
 					       
 					    </div>
 					 </div>
+					 </form>
 	        	</div>
           </div>
         </div>

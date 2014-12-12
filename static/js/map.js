@@ -18,7 +18,7 @@ function loadMap(locations){
   var mapCanvas = document.getElementById('main_map_canvas');
     var myLatlng = new google.maps.LatLng(65.61845752939256, 22.143003344535828);
     var mapOptions = {
-      zoom: 12,
+      zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
     map = new google.maps.Map(mapCanvas, mapOptions);

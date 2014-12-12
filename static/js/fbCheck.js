@@ -118,6 +118,7 @@
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
       loadProfile(response);
+      getUser(response.id,'', 'me');
       if(document.location.href == "http://trollegeuna.se:9999/user/"){
       	getUser(response.id, '', 'user');
       }
