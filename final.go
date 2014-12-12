@@ -490,25 +490,26 @@ func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *hand
 	}
 	defer con.Close()
 
-	rows, err := con.Query("select id, position, stairname from Stairs")
+	rows, err := con.Query("select id, position, stairname, uid from Stairs")
 	if err != nil {
 		return nil, &handlerError{err, "Error in DB", http.StatusInternalServerError}
 		//log.Printf("No user with that ID")
 	}
 
 	var result []Stair // create an array of stairs
-	var id uint64
+	var id, user uint64
 	var position, stairname string
 
 	for rows.Next() {
 		stair := new(Stair)
-		err = rows.Scan(&id, &position, &stairname)
+		err = rows.Scan(&id, &position, &stairname, &user)
 		if err != nil {
 			return result, &handlerError{err, "Error in DB", http.StatusInternalServerError}
 		}
 		stair.Id = id
 		stair.Position = position
 		stair.Name = stairname
+		stair.User = user
 		result = append(result, *stair)
 	}
 
@@ -756,7 +757,7 @@ func retriveStairPreview(rw http.ResponseWriter, req *http.Request) (interface{}
 	for row.Next() {
 		picture := new(Picture)
 
-		if err := row.Scan(&photo_id, &preview); err != nil {
+		if err := row.Scan(&preview, &photo_id); err != nil {
 			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
 		}
 
@@ -881,7 +882,7 @@ func main() {
 	router.Handle("/stair/{id}", handler(getStair)).Methods("GET")
 	router.Handle("/stairs", handler(getAllStairs)).Methods("GET")
 	// Get all stairs a user have added..
-	router.Handle("/stairs/{id}", handler(getUserStairs)).Methods("GET")
+	router.Handle("/users/stairs/{id}", handler(getUserStairs)).Methods("GET")
 	//Get alla pictures for a stair
 	router.Handle("/stair/picture/{id}", handler(retriveStairPictures)).Methods("GET")
 
