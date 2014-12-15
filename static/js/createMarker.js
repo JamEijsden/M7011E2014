@@ -8,30 +8,56 @@ function createMarker(location) {
       title: location.stairname,
       description: location.description,
       photo:"",
-      creator:location.user
+      creator:location.user,
+      avg: location.average
 
   });   
   document.getElementById('myModalLabel').innerHTML = marker.getTitle();
   google.maps.event.addListener(marker, 'click', function () {
       getStair(this.id,this);
       getPreviewStair(this.id);
+      document.getElementById('originalPic').style.display='none';
+      document.getElementById('previews').style.display='block';
       document.getElementById('modalUser').value = this.creator;
       document.getElementById('modalStair').value = this.id;
   });
 }
 
+function showOriginal(data) {
+    img = new Image();
+    img.src = data.photo;
+    var c = document.getElementById("originalPic");
+    var ctx = c.getContext("2d");
+    c.height = 270;
+    c.width = 566;
+    console.log('SIZE:' + c.width + " " + c.height);
+    ctx.drawImage(img,0,0, c.width, c.height);
+    c.style.display='block';
+    document.getElementById('previews').style.display='none';
+    document.getElementById('modalFooter').style.display='none';
+
+}
+function hideCanvas(){
+    document.getElementById('previews').style.display='block';
+    var c = document.getElementById("originalPic");
+    document.getElementById('modalFooter').style.display='block';
+    c.style.display = 'none';
+}
+
 function appendToMarker(data, marker){
-  document.getElementById('myModalLabel').innerHTML = data.stairname;
-  
-    document.getElementById('stairPhoto').src = marker.photo;
+  console.log(data);
+  data.photo = marker.photo;
+  document.getElementById('myModalLabel').innerHTML = data.stairname; 
+  document.getElementById('rating').innerHTML = "Rating: "+ data.average;
+  document.getElementById('stairPhoto').src = data.photo;
   
   
   document.getElementById('stairDesc').innerHTML = data.description;
   FB.api('/me', function(response) {
-    document.getElementById('idtoken').value = response.id;    
-    document.getElementById('idstair').value = $('me').value;
+    document.getElementById('idstair').value = data.id;    
+    document.getElementById('idtoken').value = response.id;
   });
-  getComments(marker.id);
+  getComments(data.id);
   $('#modal2').on('show.bs.modal', function () {
   $('.modal-content').css('height',515);
   //$('.modal-content').css('max-height','500px');
@@ -72,30 +98,44 @@ function changeModalInput(tab){
     if(tab == 'comments'){
       document.getElementById('commentFormDiv').style.display = 'block';
       document.getElementById('uploadFormDiv').style.display = 'none';
+      if(document.getElementById('previews').style.display=='none'){
+            document.getElementById('modalFooter').style.display='block';
+            document.getElementById('originalPic').style.display='none';
+      }
     }else if(tab == 'photos'){
       document.getElementById('commentFormDiv').style.display = 'none';
       document.getElementById('uploadFormDiv').style.display = 'block';
-
+        if(document.getElementById('previews').style.display=='none'){
+            document.getElementById('modalFooter').style.display='none';
+            document.getElementById('originalPic').style.display='block';
+      }
     }else{
       document.getElementById('commentFormDiv').style.display = 'none';
       document.getElementById('uploadFormDiv').style.display = 'none';
+      if(document.getElementById('previews').style.display=='none'){
+            document.getElementById('modalFooter').style.display='block';
+              document.getElementById('originalPic').style.display='none';
+      }
     }
 }
 
 function createPhotos(photos){
   if(photos == null){
-      document.getElementById('photos').innerHTML = "<p id='nopics'>There are no picture for this location</p>";
+      document.getElementById('previews').innerHTML = "<p id='nopics'>There are no picture for this location</p>";
       return;
   }
-   $('#photos').empty();
+   $('#previews').empty();
 
-  var mamaDiv = document.getElementById('photos');
-
+  mamaDiv = document.getElementById('previews');
+  //document.getElementById('photos').appendChild(mamaDiv);
   for(var i = 0; i < photos.length; i++){
     var img = document.createElement('img');
     img.style.cssText = ' margin: 5px;'
-    img.id = photos[i].id;
+    img.id = photos[i].photoId;
     img.src = photos[i].preview;
+    img.onclick = function(){
+      getOriginal(this);
+    };
     mamaDiv.appendChild(img);
   }
 }

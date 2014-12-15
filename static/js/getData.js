@@ -37,7 +37,7 @@ function getUserStairs(user_id){
 
 }
 
-function getStair(id, marker){
+function getStair(id, marker, action){
   var xmlHttp = null;
 
   xmlHttp = new XMLHttpRequest();
@@ -45,13 +45,21 @@ function getStair(id, marker){
     if (xmlHttp.readyState==4 && xmlHttp.status==200) {
         var json = xmlHttp.responseText;
         var obj = JSON.parse(json);  
-      if(marker.photo == ''){
-        console.log('Finish loading pic');
+        console.log(obj);
+      if(marker.photo == '' || action == 'user'){
+        if(action == 'user'){
+            //appendToMarker(obj,'');
+            marker = obj;
+            marker.id = id;
+            getStair(marker.id, marker, '');
+            return;
+        }else{
+        //console.log('Finish loading pic');
         marker.photo = obj.photo;
-        getStair(marker.id, marker);
-      }else{        
-        var json = xmlHttp.responseText;
-        var obj = JSON.parse(json); 
+        getStair(marker.id, marker); 
+        }
+      }else{ 
+        
         console.log('Finish loading stair: ' + obj); 
         appendToMarker(obj, marker);
       }
@@ -59,7 +67,7 @@ function getStair(id, marker){
       return "TOMTE";
     }
   };
-  if(marker.photo == ''){
+  if(marker.photo == '' || action == 'user'){
     console.log('Begun loading pic');
     xmlHttp.open( "GET", "http://79.136.28.106:8888/stair/photo/"+id, false );   
   }else{
@@ -88,7 +96,8 @@ function getComments(stairID){
   xmlHttp.send( null );
 }
 
-function postComment(form){
+function postComment(form, text){
+  console.log(form);
   document.getElementById('modalComment').value = '';
   var data = {};
   for (var i = 0, ii = form.length; i < ii; ++i) {
@@ -97,7 +106,9 @@ function postComment(form){
       data[input.name] = input.value;
     }
   }
+
   data.idStair = parseInt(data.idStair);
+  data.commentText = text;
   console.log(data);
   var xmlHttp = null;
 
@@ -115,6 +126,47 @@ function postComment(form){
 
 }
 
+function getRating(stairID){
+    var xmlHttp = null;
+
+    xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange=function() {
+    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+        var json = xmlHttp.responseText;
+        var obj = JSON.parse(json);
+        document.getElementById('rating').innerHTML = "Ranking: " + obj.average; 
+        
+    }else{
+      return "Error";
+    }
+  };
+  xmlHttp.open( "GET", "http://79.136.28.106:8888/stair/rating/"+stairID, false );   
+  xmlHttp.send( null );
+}
+function postRating(radio){
+  rating = parseInt(radio.value);
+  
+  data = {};
+  data.rating = rating;
+  data.idToken = document.getElementById('me').value;
+  data.stair_id = parseInt(document.getElementById('modalStair').value);
+  console.log(data);
+  var xmlHttp = null;
+
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange=function() {
+    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+        //document.getElementById('rating').innerHTML = "Rating: " + data.rating;
+        getRating(data.stair_id);
+    }else{
+      return "Error";
+    }
+  };
+  xmlHttp.open( "POST", "http://79.136.28.106:8888/stair/rating", true );   
+  xmlHttp.send(JSON.stringify(data));
+
+}
+
 function getUser(id, data, action){
   var xmlHttp = null;
   console.log(id + " " + data + " " + action); 
@@ -123,7 +175,7 @@ function getUser(id, data, action){
     if (xmlHttp.readyState==4 && xmlHttp.status==200) {
         var json = xmlHttp.responseText;
         var obj = JSON.parse(json);
-
+        console.log('HJAHSJ');
         if(action == 'form'){
           data = JSON.parse(data);
           data.user = obj.userID;
@@ -134,8 +186,12 @@ function getUser(id, data, action){
           
         }else if(action == 'user'){
           loadUser(obj);
-        }else if('me'){
-            $('me').value = obj.userID;
+        }else if(action == 'me'){
+            me = document.getElementById('me')
+            me.value = id;
+            me.name = obj.userID;
+          console.log(me);
+            
         }
         
       }
@@ -255,6 +311,24 @@ function getPreviewUser(userID){
   xmlHttp.send( null );
 }
 
+function getOriginal(img){
+  var xmlHttp = null;
+
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange=function() {
+    if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+        var json = xmlHttp.responseText;
+        var obj = JSON.parse(json);
+        showOriginal(obj); 
+        
+    }else{
+      return "Error";
+    }
+  };
+  xmlHttp.open( "GET", "http://79.136.28.106:8888/picture/"+parseInt(img.id), false );   
+  xmlHttp.send( null );
+}
+
 
 function getStairUser(userID){
   var xmlHttp = null;
@@ -264,6 +338,7 @@ function getStairUser(userID){
     if (xmlHttp.readyState==4 && xmlHttp.status==200) {
         var json = xmlHttp.responseText;
         var obj = JSON.parse(json);
+        console.log(obj);
         createUserLocations(obj);  
         
     }else{

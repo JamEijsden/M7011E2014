@@ -13,9 +13,7 @@
     //  div_FBLogin.style.display = 'inline';
      // div_FBLike.style.display = 'inline';
       //replace_login(true);
-      if(document.location.href == "http://trollegeuna.se:9999/") {
-		document.location.href = "http://trollegeuna.se:9999/map/";
-	}
+      
       testAPI();
 
     } else if (response.status === 'not_authorized') {
@@ -122,9 +120,6 @@
       console.log('Successful login for: ' + response.name);
       sendUser(response);
      //   document.getElementById('photo').src="https://graph.facebook.com/"+response.id+"/picture"; 
-     if(document.location.href != "http://trollegeuna.se:9999/"){
-        loadProfile(response);
-     }
     });
 }
 
@@ -141,6 +136,9 @@
    xhr.onreadystatechange=function() {
     if (xhr.readyState==4 && xhr.status==200) {
       console.log('User added to DB');
+      if(document.location.href == "http://trollegeuna.se:9999/") {
+        document.location.href = "http://trollegeuna.se:9999/map/";
+      }
     }else if(xhr.readyState==4 && xhr.status==302){
       console.log("Use already exists");
     }

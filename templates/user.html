@@ -3,6 +3,8 @@
 
 {{define "head"}} 
 	<script src="/static/js/loadUser.js"></script>
+	<script src="/static/js/createMarker.js"></script>
+
 {{end}}
 
 
@@ -16,7 +18,7 @@
 {{define "content"}}
 		<p id = "hej"> Here I, as a User, will be able to find my uploaded location, photos etc. </p>
 		<div class='container' id='userLoc'>
-		<input type="button" class="btn btn-primary" onclick="openModal();" value="Add Location">
+		<!--<input type="button" class="btn btn-primary" onclick="openModal();" value="Add Location">-->
 			
 		</div>
 
@@ -26,13 +28,14 @@
           <div class="modal-header" style='border-bottom:0px;'>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4 class="modal-title" id="myModalLabel"></h4>
+            <h5 id="rating" style="float:right;"></h5>
             <ul class="nav nav-tabs" id="tabContent">
-        		<li class="active"><a href="#details" data-toggle="tab">Details</a></li>
-        		<li><a href="#comments" data-toggle="tab">Comments</a></li>
-        		<li><a href="#photos" data-toggle="tab">Photos</a></li>
+        		<li class="active"><a href="#details" data-toggle="tab" id='hrefDetails' onclick='changeModalInput("details");'>Details</a></li>
+        		<li><a href="#comments" data-toggle="tab" id='hrefComments' onclick='changeModalInput("comments");'>Comments</a></li>
+        		<li><a href="#photos" data-toggle="tab" id='hrefPhotos' onclick='changeModalInput("photos");'>Photos</a></li>
 		</ul>
           </div>
-          <div class="modal-body" id='modalCont' style='position: relative;  overflow-y: auto; max-height: 300px;padding: 15px;'>
+          <div class="modal-body" id='modalCont' style='position: relative;  overflow-y: auto; max-height: 300px;padding: 0px;'>
 
 
           	<div class="tab-content" id='tabcontent'>
@@ -41,6 +44,23 @@
 	            <div class='container'  style='height:100%;width:100%;margin:0;text-align:center;'>
 			    	<div class='row' style='float:left; height:80%; width:50%;'>
 			      			<img src=''id='stairPhoto' height='70%' width='80%'>
+			      			<div id="rateDiv" container style="margin: 0 auto;">
+			    			<label>Rate</label>
+					           <fieldset>
+					           		
+								    <label for="1">1</label>
+								    <input type="radio" name="rating" onchange="postRating(this);" value=1 style="display:inline-block;"/>
+								    <label for="2"></label>
+								    <input type="radio" name="rating" onchange="postRating(this);" value=2 style="display:inline-block;" />
+								    <label for="3"></label>
+								    <input type="radio" name="rating" onchange="postRating(this);" value=3 style="display:inline-block;"/>
+								    <label for="4"></label>
+								    <input type="radio" name="rating" onchange="postRating(this);" value=4 style="display:inline-block;"/>
+								    <label for="5"></label>
+								    <input type="radio" name="rating" onchange="postRating(this);" value=5 style="display:inline-block;"/>
+								    <label for="5">5</label>  
+								</fieldset>
+					       </div>
 			    	</div>
 			    	<div class='row' style='float:right; margin:5px; text-align:left; height:80%; width:50%;'>
 			     		<p style='font-size:16px;' id="stairDesc"></p>
@@ -61,21 +81,20 @@
 	        	</div> 
 
 
-	        	<div class="tab-pane" id="photos">
-	        		Add photos here!
+	        	<div class="tab-pane" id="photos" style='text-align:center;'>
+	        		<div class="container" id="previews" style="display:block;"></div>
+	        		<canvas id="originalPic" style="width:566px; height:270px; margin: 0 auto;" onclick="hideCanvas();"></canvas>
+	       		</div> 
 	       		</div> 
 			</div>
           		
-          </div>
-
-          <div class="modal-footer">
-        		<div class='row' id="commentFormDiv" style='text-align:center;'>
-
+          <div class="modal-footer" id="modalFooter">
+        		<div class='row' id="commentFormDiv" style='text-align:center; display:none;'>
 	        		<form class="form-horizontal" role="form" name="commentForm" action="javascript:void(0);" method="POST">
 	        		  <div class="form-group">
 					    <div class="col-sm-10" style='width:100%; height:30%;'>
-					      <textarea class="form-control" style='width:90%; height:100%; resize:none; margin:0 auto;'name="commentText" style='width:80%; float:left;' row="3" id="desc" placeholder="Leave a comment"></textarea>
-					      <button type="submit" class="btn btn-primary" style='width:20%; margin:5px;'onclick="postComment(this.form);">Submit</button>
+					      <textarea class="form-control" style='width:90%; height:100%; resize:none; margin:0 auto;'name="commentText" style='width:80%; float:left;' row="3" id="modalComment" placeholder="Leave a comment"></textarea>
+					      <button type="submit" class="btn btn-primary" style='width:20%; margin:5px;'onclick="postComment(this.form, document.getElementById('modalComment').value);">Submit</button>
 					    </div>
 					  </div>
 					  <input type="hidden" class="form-control "value='' name="idStair" id="idstair">
@@ -83,7 +102,23 @@
 					  
 	        		</form>
 	        	</div>
+	        	<div class='row' id='uploadFormDiv' style='display:none;'>
+	        	<form class="form-horizontal" role="form" name="uploadForm" action="javascript:void(0);" method="POST">	
+	        		<div class="form-group"> 
+			
+					    <div class="col-sm-10" style=" width:100%; margin: 0 auto;" id='formInput'> 
+					      <input type="file" class="btn btn-default" id='modalImage' onchange="uploadPhoto(this.form);" style="margin: 0 auto;" name='photo'>
+					      <p id='suc'style="text-align:center;Margin: 2px;"> Upload picture </p>
+					      <input type="hidden" class="form-control "value='' name="userID" id="modalUser" >
+					      <input type="hidden" class="form-control "value='' name="idStair" id="modalStair">
+					       
+					    </div>
+					 </div>
+					 </form>
+	        	</div>
           </div>
+          </div>
+
         </div>
 
       
