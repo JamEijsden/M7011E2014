@@ -43,12 +43,13 @@ type User struct {
 
 //Stair struct
 type Stair struct {
-	Id          uint64 `json:"id"`
-	Position    string `json:"position"`
-	Name        string `json:"stairname"`
-	User        uint64 `json:"user"`
-	Photo       string `json:"photo"`
-	Description string `json:"description"`
+	Id          uint64  `json:"id"`
+	Position    string  `json:"position"`
+	Name        string  `json:"stairname"`
+	User        uint64  `json:"user"`
+	Photo       string  `json:"photo"`
+	Description string  `json:"description"`
+	Average     float64 `json:"average"`
 }
 
 //Comment struct
@@ -67,6 +68,15 @@ type Picture struct {
 	UserId  uint64 `json:"userID"`
 	Picture string `json:"photo"`
 	Preview string `json:"preview"`
+}
+
+// Ranking struct
+type Rank struct {
+	R_Id    uint64  `json:"r_id"`
+	Rating  int     `json:"rating"`
+	IdToken string  `json:"idToken"`
+	StairId uint64  `json:"stair_id"`
+	Average float64 `json:"average"`
 }
 
 // a custom type that we can use for handling errors and formatting responses
@@ -402,7 +412,7 @@ func getUserStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *han
 	}
 	defer con.Close()
 
-	row, err := con.Query("select * from Stairs where uid =?", param)
+	row, err := con.Query("select id, position, stairname, uid from Stairs where uid =?", param)
 	if err == sql.ErrNoRows {
 		return nil, &handlerError{err, "Error no stairs found", http.StatusBadRequest}
 		//log.Printf("No user with that ID")
@@ -412,69 +422,27 @@ func getUserStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *han
 		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
 		//panic(err)
 	}
-
-	stair := new(Stair)
+	var position, stairname string
+	var uid, id uint64
+	var result []Stair
 	for row.Next() {
-		var position, stairname, photo, description string
-		var uid, id uint64
 
-		if err := row.Scan(&id, &position, &stairname, &description, &uid, &photo); err != nil {
+		stair := new(Stair)
+		if err := row.Scan(&id, &position, &stairname, &uid); err != nil {
 			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
 			//log.Fatal(err)
 		}
 
 		stair.Id = id
 		stair.Name = stairname
-		stair.Photo = photo
 		stair.User = uid
-		stair.Description = description
 		stair.Position = position
+		result = append(result, *stair)
 
 	}
 
-	return stair, nil
+	return result, nil
 
-}
-func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
-	param := mux.Vars(req)["id"]
-	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
-	if err != nil {
-		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
-		log.Fatal(err)
-	}
-	defer con.Close()
-
-	row, err := con.Query("select id, position, stairname, description, uid from Stairs where id =?", param)
-	if err == sql.ErrNoRows {
-		return nil, &handlerError{err, "Error stair not found", http.StatusBadRequest}
-		//log.Printf("No user with that ID")
-	}
-
-	if err != nil {
-		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
-		//panic(err)
-	}
-
-	stair := new(Stair)
-	for row.Next() {
-		var position, stairname, description string
-		var uid, id uint64
-
-		if err := row.Scan(&id, &position, &stairname, &description, &uid); err != nil {
-			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
-			//log.Fatal(err)
-		}
-
-		stair.Id = id
-		stair.Name = stairname
-		//stair.Photo = photo
-		stair.User = uid
-		stair.Description = description
-		stair.Position = position
-
-	}
-
-	return stair, nil
 }
 
 /*
@@ -626,8 +594,9 @@ func getPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 	for row.Next() {
 		var photo_id, user_id, stair_id uint64
 		var photo_base64 string
+		var preview
 
-		if err := row.Scan(&photo_id, &user_id, &stair_id, &photo_base64); err != nil {
+		if err := row.Scan(&photo_id, &user_id, &stair_id, &photo_base64, &preview); err != nil {
 			log.Fatal(err)
 		}
 		photo.PhotoId = photo_id
@@ -726,6 +695,153 @@ func retriveStairPictures(rw http.ResponseWriter, req *http.Request) (interface{
 	}
 
 	return result, nil
+}
+
+/*
+	Retrive a stair and Rating from the db
+
+*/
+
+func getStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	param := mux.Vars(req)["id"]
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		log.Fatal(err)
+	}
+	defer con.Close()
+
+	row, err := con.Query("select id, position, stairname, description, uid from Stairs where id =?", param)
+	if err == sql.ErrNoRows {
+		return nil, &handlerError{err, "Error stair not found", http.StatusBadRequest}
+
+	}
+
+	if err != nil {
+		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
+		//panic(err)
+	}
+
+	stair := new(Stair)
+	for row.Next() {
+		var position, stairname, description string
+		var uid, id uint64
+
+		if err := row.Scan(&id, &position, &stairname, &description, &uid); err != nil {
+			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
+			//log.Fatal(err)
+		}
+
+		stair.Id = id
+		stair.Name = stairname
+		//stair.Photo = photo
+		stair.User = uid
+		stair.Description = description
+		stair.Position = position
+
+	}
+
+	q2, err := con.Query("SELECT AVG(rating) FROM Rating where stair_id =?", param)
+
+	if err == sql.ErrNoRows {
+		return nil, &handlerError{err, "Error rating not found", http.StatusBadRequest}
+	}
+
+	if err != nil {
+		return nil, &handlerError{err, "Internal Error when req  rating DB", http.StatusInternalServerError}
+		//panic(err)
+	}
+	for q2.Next() {
+		var average float64
+		if err := q2.Scan(&average); err != nil {
+			return stair, nil
+		}
+		stair.Average = average
+
+	}
+
+	return stair, nil
+}
+func retriveStairRating(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	param := mux.Vars(req)["id"]
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+		return nil, &handlerError{err, "Local error opening DB", http.StatusInternalServerError}
+		log.Fatal(err)
+	}
+	defer con.Close()
+
+	row, err := con.Query("SELECT AVG(rating) FROM Rating where stair_id =?", param)
+	if err == sql.ErrNoRows {
+		return nil, &handlerError{err, "Error fetching rating", http.StatusBadRequest}
+
+	}
+
+	if err != nil {
+		return nil, &handlerError{err, "Internal Error when req DB", http.StatusInternalServerError}
+	}
+	rating := new(Rank)
+	for row.Next() {
+
+		var average float64
+
+		if err := row.Scan(&average); err != nil {
+			return nil, &handlerError{err, "Internal Error when reading req from DB", http.StatusInternalServerError}
+		}
+
+		rating.Average = average
+
+	}
+
+	return rating, nil
+}
+
+/*
+	Add stair Rating to the db
+
+*/
+func addStairRating(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
+	data, e := ioutil.ReadAll(req.Body)
+
+	if e != nil {
+
+		return nil, &handlerError{e, "Can't read request", http.StatusBadRequest}
+	}
+	var payload Rank
+	e = json.Unmarshal(data, &payload)
+
+	if e != nil {
+
+		return Rank{}, &handlerError{e, "Could'nt parse JSON", http.StatusInternalServerError}
+	}
+	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
+	if err != nil {
+
+		return nil, &handlerError{err, "Internal server error", http.StatusInternalServerError}
+	}
+	defer con.Close()
+
+	row, _ := con.Query("select count(*) from Rating where idToken=? AND stair_id= ?", payload.IdToken, payload.StairId)
+	var count int
+	for row.Next() {
+		row.Scan(&count)
+	}
+
+	if count == 1 {
+		fmt.Println(payload)
+		_, err = con.Exec("UPDATE Rating SET rating=? WHERE idToken=''+? AND stair_id=?", payload.Rating, payload.IdToken, payload.StairId)
+		return http.StatusOK, nil
+
+	}
+
+	_, err = con.Exec("insert into Rating(rating, idToken, stair_id) values(?,?,?)", payload.Rating, payload.IdToken, payload.StairId)
+
+	if err != nil {
+
+		return nil, &handlerError{err, "Error adding to DB", http.StatusInternalServerError}
+	}
+
+	return payload, nil
 }
 
 /*
@@ -891,6 +1007,11 @@ func main() {
 
 	router.Handle("/stair/photo/{id}", handler(retriveStairPhoto)).Methods("GET")
 
+	//Get raiting for stair
+	router.Handle("/stair/rating/{id}", handler(retriveStairRating)).Methods("GET")
+
+	// POST rating for stair
+	router.Handle("/stair/rating", handler(addStairRating)).Methods("POST")
 	// handlers for comments
 	router.Handle("/comment", handler(addComment)).Methods("POST")
 	router.Handle("/comment/{id}", handler(getComments)).Methods("GET")
