@@ -594,7 +594,7 @@ func getPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 	for row.Next() {
 		var photo_id, user_id, stair_id uint64
 		var photo_base64 string
-		var preview
+		var preview string
 
 		if err := row.Scan(&photo_id, &user_id, &stair_id, &photo_base64, &preview); err != nil {
 			log.Fatal(err)
