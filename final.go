@@ -25,6 +25,13 @@ import (
 )
 
 // error response struct
+/*
+A error if composed of
+	Error
+	Message	of what error it is
+	Code	errorcode
+
+*/
 type handlerError struct {
 	Error   error
 	Message string
@@ -33,6 +40,14 @@ type handlerError struct {
 
 // user struct
 
+/*
+A  User is composed of a
+	UserID witch we set
+	FirstName
+	LastName
+	IdToken to that persons facebook
+	and a Photo witch is a url to that persons fb profile pic
+*/
 type User struct {
 	UserID    uint64 `json:"userID"`
 	FirstName string `json:"first_name"`
@@ -42,6 +57,16 @@ type User struct {
 }
 
 //Stair struct
+/*
+A Stair is composed of
+	Id			witch we set
+	Position 	of the stair
+	Name		of the Stair
+	User		the user whom have added this stair
+	Photo 		of the Stair
+	Description	of the Stair
+	Average		rating of the stair
+*/
 type Stair struct {
 	Id          uint64  `json:"id"`
 	Position    string  `json:"position"`
@@ -53,6 +78,14 @@ type Stair struct {
 }
 
 //Comment struct
+/*
+A Comment is composed of
+CommentId		a unique id for the comment
+CommentText		the comments content
+CommentDate		the date of that comment
+IdStair			the stairs id
+IdToken			facebook id to that user
+*/
 type Comment struct {
 	CommentId   uint64    `json:"commentId"`
 	CommentText string    `json:"commentText"`
@@ -62,6 +95,15 @@ type Comment struct {
 }
 
 //Picture struct
+/*
+A Picture is composed of
+	PhotoId 	a unique id for that photo
+	StairId 	the id for the stair
+	UserId  	the id for the user
+	Picture 	the acctual picture
+	Preview 	a shrunken down picture
+
+*/
 type Picture struct {
 	PhotoId uint64 `json:"photoId"`
 	StairId uint64 `json:"idStair"`
@@ -71,6 +113,14 @@ type Picture struct {
 }
 
 // Ranking struct
+/*
+A Rank is composed of
+	R_Id		a unique id for that rank
+	Rating  	the rating
+	IdToken 	the users id token
+	StairId 	the stair whom this rating is supposed to point to
+	Average 	the average rating this star have recived
+*/
 type Rank struct {
 	R_Id    uint64  `json:"r_id"`
 	Rating  int     `json:"rating"`
@@ -117,7 +167,7 @@ func (fn handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 /*
 	List all users in the db
-	!READY FOR TESTING!
+	This function lists all users from the db
 */
 func listAllUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
 	con, err := sql.Open("mymysql", "tcp:localhost:3306*M7011E/root/jaam")
@@ -153,8 +203,8 @@ func listAllUsers(w http.ResponseWriter, r *http.Request) (interface{}, *handler
 
 /*
 	Get a user from the db
-	!DONE FOR TESTING!
-
+	This function gets a specific user from the db.
+	we sort out whom they whant by searching the incomming data for id
 */
 func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
 	//mux.Vars(r)["id"] grabs variables from the path
@@ -195,7 +245,8 @@ func getUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 
 /*
 	ADD USER TO DB
-	!DONE for TESTING!
+	Function to add a new user to the db.
+	This also checks to se that this user isnt already in the db
 
 */
 func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
@@ -236,12 +287,12 @@ func addUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError
 	}
 
 	return payload, nil
-	//row, err := con.Query("select * from users where uid =?", param)
+
 }
 
 /*
 	Remove user from DB
-
+	Function not yet implemented
 */
 
 func removeUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerError) {
@@ -258,7 +309,7 @@ func removeUser(w http.ResponseWriter, r *http.Request) (interface{}, *handlerEr
 
 /*
 	Add stair to DB
-	!Done for testing!
+	Function to add a stair to the db
 
 */
 func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
@@ -327,7 +378,7 @@ func addStair(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerE
 
 /*
 	Add picture to db
-
+	Function to Add a new picture to the db. Also creates a thumbnail from that picture
 */
 func addPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
 	data, e := ioutil.ReadAll(req.Body)
@@ -400,7 +451,7 @@ func addPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 
 /*
 	Get stair from DB
-	!READY FOR TESTING!
+	Grabs a stair from the db.
 */
 
 func getUserStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
@@ -447,7 +498,7 @@ func getUserStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *han
 
 /*
 	Get all stairs from DB
-	!READY FOR TESTING!
+	Returns all the stairs in the db
 
 */
 func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
@@ -486,6 +537,7 @@ func getAllStairs(rw http.ResponseWriter, req *http.Request) (interface{}, *hand
 
 /*
 	Get comment for a specific stairid
+	Get all comments on a specific stair
 */
 func getComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
 	param := mux.Vars(req)["id"]
@@ -534,6 +586,7 @@ func getComments(rw http.ResponseWriter, req *http.Request) (interface{}, *handl
 
 /*
 	Add commment to db
+	Add a new comment to the db
 
 */
 func addComment(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
@@ -571,6 +624,7 @@ func addComment(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 
 /*
 	Get a specific picture from from db
+	Returns a picture from the db
 
 */
 func getPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
@@ -610,7 +664,7 @@ func getPicture(rw http.ResponseWriter, req *http.Request) (interface{}, *handle
 
 /*
 	Retrive a users pictures
-
+	Retrives all pictures a user have uploaded
 */
 func retriveUserPictures(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
 	param := mux.Vars(req)["id"]
@@ -655,6 +709,7 @@ func retriveUserPictures(rw http.ResponseWriter, req *http.Request) (interface{}
 
 /*
 	Retrive a stairs pictures
+	Retruves a stairs pictures
 
 */
 func retriveStairPictures(rw http.ResponseWriter, req *http.Request) (interface{}, *handlerError) {
@@ -973,9 +1028,6 @@ func main() {
 	dir := flag.String("directory", "web/", "directory of web files")
 	flag.Parse()
 
-	// connect to database
-	//	connect()
-
 	// handle all requests by serving a file of the same name
 	fs := http.Dir(*dir)
 	fileHandler := http.FileServer(fs)
@@ -986,13 +1038,14 @@ func main() {
 
 	// Handlers for Users
 	router.Handle("/users", handler(listAllUsers)).Methods("GET")
-	// hämta ut infon för att lägga till ny
 	router.Handle("/users", handler(addUser)).Methods("POST")
 	router.Handle("/users/{id}", handler(getUser)).Methods("GET")
 	router.Handle("/users/{id}", handler(removeUser)).Methods("DELETE")
-	// hämta alla bilder en användare har laddat upp
+
+	// Handler for users Picture
 	router.Handle("/users/picture/{id}", handler(retriveUserPictures)).Methods("GET")
 	router.Handle("/users/picture/preview/{id}", handler(retriveUserPicturesPreview)).Methods("GET")
+
 	// Handlers for stairs
 	router.Handle("/stair", handler(addStair)).Methods("POST")
 	router.Handle("/stair/{id}", handler(getStair)).Methods("GET")
@@ -1001,24 +1054,23 @@ func main() {
 	router.Handle("/users/stairs/{id}", handler(getUserStairs)).Methods("GET")
 	//Get alla pictures for a stair
 	router.Handle("/stair/picture/{id}", handler(retriveStairPictures)).Methods("GET")
-
 	//Get all preview pictures for a stair
 	router.Handle("/stair/picture/preview/{id}", handler(retriveStairPreview)).Methods("GET")
 
 	router.Handle("/stair/photo/{id}", handler(retriveStairPhoto)).Methods("GET")
-
 	//Get raiting for stair
 	router.Handle("/stair/rating/{id}", handler(retriveStairRating)).Methods("GET")
-
 	// POST rating for stair
 	router.Handle("/stair/rating", handler(addStairRating)).Methods("POST")
-	// handlers for comments
+
+	// Handlers for comments
 	router.Handle("/comment", handler(addComment)).Methods("POST")
 	router.Handle("/comment/{id}", handler(getComments)).Methods("GET")
 
 	// Handlers for pictures
 	router.Handle("/picture", handler(addPicture)).Methods("POST")
 	router.Handle("/picture/{id}", handler(getPicture)).Methods("GET")
+
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileHandler))
 	http.Handle("/", router)
 
