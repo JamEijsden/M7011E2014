@@ -1,4 +1,4 @@
-M7011E2014
+Course: M7011E 2014
 ==========
 
 In this course we got to start from scratch and decide what technologies we wanted to use and what to create.
